@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models\Storefront;
 
 use Fleetbase\Casts\Json;
 use Fleetbase\Models\BaseModel;

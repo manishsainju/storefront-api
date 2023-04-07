@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront;
 
 use Fleetbase\Http\Controllers\Controller;
 use Fleetbase\Models\Order;

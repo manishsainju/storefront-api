@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Fleetbase\\": "src/"
+            "Fleetbase\\Storefront\\": "src/"
         }
     },
     "autoload-dev": {
@@ -40,6 +40,10 @@
         {
             "type": "path",
             "url": "../core-api"
+        },
+        {
+            "type": "path",
+            "url": "../fleetops-api"
         }
     ],
     "minimum-stability": "dev",
@@ -47,7 +51,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Fleetbase\\Providers\\FleetOpsServiceProvider"
+                "Fleetbase\\Storefront\\Providers\\StorefrontServiceProvider"
             ]
         }
     },

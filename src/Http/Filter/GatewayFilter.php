@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Filters\Storefront;
+namespace Fleetbase\Storefront\Http\Filters\Storefront;
 
 class GatewayFilter
 {

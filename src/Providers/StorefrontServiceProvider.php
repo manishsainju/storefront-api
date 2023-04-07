@@ -1,21 +1,22 @@
 <?php
 
-namespace Fleetbase\Providers;
+namespace Fleetbase\Storefront\Providers;
 
-use Exception;
-
-// require __DIR__ . '/../../vendor/autoload.php';
+use Fleetbase\Providers\CoreServiceProvider;
+use Fleetbase\FleetOps\Providers\FleetOpsServiceProvider;
 
 if (!class_exists(CoreServiceProvider::class)) {
-    throw new Exception('Storefront cannot be loaded without `fleetbase/core-api` installed!');
+    throw new \Exception('Storefront cannot be loaded without `fleetbase/core-api` installed!');
 }
 
-// if (!class_exists(FleetOpsServiceProvider::class)) {
-//     throw new Exception('Storefront cannot be loaded without `fleetbase/storefront-api` installed!');
-// }
+if (!class_exists(FleetOpsServiceProvider::class)) {
+    throw new \Exception('Storefront cannot be loaded without `fleetbase/fleetops-api` installed!');
+}
 
 /**
- * CoreServiceProvider
+ * Storefront service provider.
+ *
+ * @package \Fleetbase\Storefront\Providers
  */
 class StorefrontServiceProvider extends CoreServiceProvider
 {
@@ -23,6 +24,9 @@ class StorefrontServiceProvider extends CoreServiceProvider
      * Bootstrap any package services.
      *
      * @return void
+     *
+     * @throws \Exception If the `fleetbase/core-api` package is not installed.
+     * @throws \Exception If the `fleetbase/fleetops-api` package is not installed.
      */
     public function boot()
     {

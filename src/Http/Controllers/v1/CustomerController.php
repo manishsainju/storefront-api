@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Exception;
 use Fleetbase\Http\Controllers\Controller;

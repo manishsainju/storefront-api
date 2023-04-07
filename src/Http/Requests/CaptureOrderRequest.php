@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Requests\Storefront;
+namespace Fleetbase\Storefront\Http\Requests\Storefront;
 
 use Fleetbase\Http\Requests\Request;
 

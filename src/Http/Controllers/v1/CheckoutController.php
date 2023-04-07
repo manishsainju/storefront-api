@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
 use Fleetbase\Http\Requests\Storefront\CaptureOrderRequest;

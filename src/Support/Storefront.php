@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Support;
+namespace Fleetbase\Storefront\Support;
 
 use Fleetbase\Models\Contact;
 use Fleetbase\Models\Order;

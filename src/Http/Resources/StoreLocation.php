@@ -1,8 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
-use Fleetbase\Http\Resources\v1\Place;
+use Fleetbase\FleetOps\Http\Resources\v1\Place;
 use Fleetbase\Http\Resources\FleetbaseResource;
 
 class StoreLocation extends FleetbaseResource

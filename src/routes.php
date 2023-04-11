@@ -1,6 +1,5 @@
 <?php
 
-use Fleetbase\Support\InternalConfig;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +12,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::prefix(InternalConfig::get('api.routing.prefix', 'storefront'))->namespace('Fleetbase\Http\Controllers')->group(
+Route::prefix(config('storefront.api.routing.prefix', 'storefront'))->namespace('Fleetbase\Storefront\Http\Controllers')->group(
     function ($router) {
         /*
         |--------------------------------------------------------------------------
@@ -23,12 +21,21 @@ Route::prefix(InternalConfig::get('api.routing.prefix', 'storefront'))->namespac
         |
         | Primary internal routes for console.
         */
-        $router->prefix(InternalConfig::get('api.routing.internal_prefix', 'int'))->namespace('Internal')->group(
+        $router->prefix(config('storefront.api.routing.internal_prefix', 'int'))->group(
             function ($router) {
                 $router->group(
-                    ['prefix' => 'v1', 'namespace' => 'v1', 'middleware' => ['fleetbase.protected']],
+                    ['prefix' => 'v1', 'middleware' => ['fleetbase.protected']],
                     function ($router) {
-                        $router->fleetbaseRoutes('contacts');
+                        $router->get('/', 'ActionController@welcome');
+                        $router->group(
+                            ['prefix' => 'actions'],
+                            function ($router) {
+                                $router->get('store-count', 'ActionController@getStoreCount');
+                                $router->get('metrics', 'ActionController@getMetrics');
+                            }
+                        );
+                        $router->fleetbaseRoutes('stores');
+                        $router->fleetbaseRoutes('customers');
                         $router->fleetbaseRoutes(
                             'drivers',
                             function ($router, $controller) {

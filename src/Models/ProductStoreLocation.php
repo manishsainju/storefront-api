@@ -1,23 +1,15 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class ProductStoreLocation extends BaseModel
+class ProductStoreLocation extends StorefrontModel
 {
     use HasUuid, HasApiModelBehavior, HasSlug;
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.

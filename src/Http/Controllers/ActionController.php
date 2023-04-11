@@ -1,18 +1,21 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Models\Contact;
-use Fleetbase\Models\Order;
-use Fleetbase\Models\Storefront\Store;
-// use Fleetbase\Models\Transaction;
-use Fleetbase\Support\Resp;
+use Fleetbase\FleetOps\Models\Contact;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\Storefront\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class ActionController extends Controller
 {
+    public function welcome()
+    {
+        return response()->json(['message' => 'Hello Friend!']);
+    }
+
     /**
      * Get the number of storefronts created.
      *
@@ -37,7 +40,7 @@ class ActionController extends Controller
         $store = $request->input('store');
         $start = $request->has('start') ? Carbon::fromString($request->input('start'))->toDateTimeString() : Carbon::now()->startOfMonth()->toDateTimeString();
         $end = $request->has('end') ? Carbon::fromString($request->input('end'))->toDateTimeString() : Carbon::now()->toDateTimeString();
-        // dd(urldecode($request->start));
+
         // default metrics
         $metrics = [
             'orders_count' => 0,
@@ -48,13 +51,13 @@ class ActionController extends Controller
 
         // get the current active store
         if (!$store) {
-            return Resp::json($metrics);
+            return response()->json($metrics);
         }
 
         $store = Store::where('uuid', $store)->first();
 
         if (!$store) {
-            return Resp::json($metrics);
+            return response()->json($metrics);
         }
 
         /**
@@ -101,7 +104,7 @@ class ActionController extends Controller
                 return $order->transaction->amount;
             });
 
-        Resp::json($metrics);
+        response()->json($metrics);
     }
 
     /**

@@ -1,16 +1,15 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
-use Fleetbase\Models\Place;
 use Fleetbase\Models\User;
+use Fleetbase\FleetOps\Models\Place;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 
-class StoreLocation extends BaseModel
+class StoreLocation extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, SpatialTrait;
 
@@ -20,13 +19,6 @@ class StoreLocation extends BaseModel
      * @var string
      */
     protected $publicIdType = 'store_location';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -88,7 +80,7 @@ class StoreLocation extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -96,10 +88,7 @@ class StoreLocation extends BaseModel
      */
     public function place()
     {
-        // ->withTrashed(); undefined
-        return $this->setConnection('mysql')->belongsTo(Place::class, 'place_uuid')->where(function ($q) {
-            $q->whereNull('deleted_at')->orWhereNotNull('deleted_at');
-        });
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Place::class, 'place_uuid');
     }
 
     /**

@@ -1,9 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
@@ -18,7 +17,7 @@ use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Network extends BaseModel
+class Network extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, HasOptionsAttributes, HasSlug;
 
@@ -28,13 +27,6 @@ class Network extends BaseModel
      * @var string
      */
     protected $publicIdType = 'network';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -108,7 +100,7 @@ class Network extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -116,7 +108,7 @@ class Network extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -124,7 +116,7 @@ class Network extends BaseModel
      */
     public function logo()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -132,7 +124,7 @@ class Network extends BaseModel
      */
     public function backdrop()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -140,7 +132,7 @@ class Network extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'key_uuid');
     }
 
     /**
@@ -180,7 +172,7 @@ class Network extends BaseModel
      */
     public function invitations()
     {
-        return $this->setConnection('mysql')->hasMany(Invite::class, 'subject_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Invite::class, 'subject_uuid');
     }
 
     /**

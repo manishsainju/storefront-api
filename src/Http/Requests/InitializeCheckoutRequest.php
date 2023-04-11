@@ -1,8 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Requests\Storefront;
+namespace Fleetbase\Storefront\Http\Requests;
 
-use Fleetbase\Http\Requests\Request;
+use Fleetbase\Http\Requests\FleetbaseRequest;
 // use Fleetbase\Rules\Storefront\CartExists;
 use Fleetbase\Rules\Storefront\CustomerExists;
 use Fleetbase\Rules\Storefront\GatewayExists;

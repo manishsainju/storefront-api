@@ -1,15 +1,14 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\File;
-use Fleetbase\Models\Place;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\Support\Utils as FleetbaseUtils;
 use Fleetbase\Traits\HasMetaAttributes;
 use Fleetbase\Traits\HasOptionsAttributes;
 use Fleetbase\Traits\HasUuid;
@@ -21,7 +20,7 @@ use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Store extends BaseModel
+class Store extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, HasOptionsAttributes, HasMetaAttributes, HasSlug, Searchable;
 
@@ -31,13 +30,6 @@ class Store extends BaseModel
      * @var string
      */
     protected $publicIdType = 'store';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -120,7 +112,7 @@ class Store extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -128,7 +120,7 @@ class Store extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -136,7 +128,7 @@ class Store extends BaseModel
      */
     public function logo()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -144,7 +136,7 @@ class Store extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'key_uuid');
     }
 
     /**
@@ -152,7 +144,21 @@ class Store extends BaseModel
      */
     public function media()
     {
-        return $this->files()->where('type', 'storefront_store_media');
+        return $this->files()
+            ->select(
+                [
+                    'id',
+                    'uuid',
+                    'public_id',
+                    'original_filename',
+                    'content_type',
+                    'path',
+                    'type',
+                    'caption',
+                    'created_at',
+                    'updated_at'
+                ]
+            )->where('type', 'storefront_store_media');
     }
 
     /**
@@ -160,7 +166,7 @@ class Store extends BaseModel
      */
     public function backdrop()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -168,7 +174,7 @@ class Store extends BaseModel
      */
     public function categories()
     {
-        return $this->setConnection('mysql')->hasMany(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Category::class);
     }
 
     /**
@@ -272,8 +278,7 @@ class Store extends BaseModel
      */
     public function getLogoUrlAttribute()
     {
-        // return static::attributeFromCache($this, 'logo.s3url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png');
-        return $this->logo->s3url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
+        return data_get($this, 'logo.url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png');
     }
 
     /**
@@ -281,8 +286,7 @@ class Store extends BaseModel
      */
     public function getBackdropUrlAttribute()
     {
-        // return static::attributeFromCache($this, 'backdrop.s3url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png');
-        return $this->backdrop->s3url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png';
+        return data_get($this, 'backdrop.url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png');
     }
 
     /**
@@ -318,20 +322,22 @@ class Store extends BaseModel
             $iconName = $icon;
         }
 
-        return Category::create([
-            'company_uuid' => $this->company_uuid,
-            'owner_uuid' => $this->uuid,
-            'owner_type' => Utils::getMutationType('store:storefront'),
-            'parent_uuid' => $parent instanceof Category ? $parent->uuid : null,
-            'icon_file_uuid' => $iconFile instanceof File ? $iconFile->uuid : null,
-            'for' => 'storefront_product',
-            'name' => $name,
-            'description' => $description,
-            'translations' => $translations,
-            'meta' => $meta,
-            'icon' => $iconName,
-            'icon_color' => $iconColor
-        ]);
+        return Category::create(
+            [
+                'company_uuid' => $this->company_uuid,
+                'owner_uuid' => $this->uuid,
+                'owner_type' => FleetbaseUtils::getMutationType('storefront:store'),
+                'parent_uuid' => $parent instanceof Category ? $parent->uuid : null,
+                'icon_file_uuid' => $iconFile instanceof File ? $iconFile->uuid : null,
+                'for' => 'storefront_product',
+                'name' => $name,
+                'description' => $description,
+                'translations' => $translations,
+                'meta' => $meta,
+                'icon' => $iconName,
+                'icon_color' => $iconColor
+            ]
+        );
     }
 
     /**
@@ -374,27 +380,29 @@ class Store extends BaseModel
      */
     public function createProduct(string $name, string $description, array $tags = [], ?Category $category = null, ?File $image = null, ?User $createdBy = null, string $sku = '', int $price = 0, string $status = 'available', array $options = []): Product
     {
-        return Product::create([
-            'company_uuid' => $this->company_uuid,
-            'primary_image_uuid' => $image instanceof File ? $image->uuid : null,
-            'created_by_uuid' => $createdBy instanceof User ? $createdBy->uuid : null,
-            'store_uuid' => $this->uuid,
-            'category_uuid' => $category instanceof Category ? $category->uuid : null,
-            'name' => $name,
-            'description' => $description,
-            'tags' => $tags,
-            'sku' => $sku,
-            'price' => $price,
-            'sale_price' => isset($options['sale_price']) ? $options['sale_price'] : null,
-            'currency' => $this->currency,
-            'is_service' => isset($options['is_service']) ? $options['is_service'] : false,
-            'is_bookable' => isset($options['is_bookable']) ? $options['is_bookable'] : false,
-            'is_available' => isset($options['is_available']) ? $options['is_available'] : true,
-            'is_on_sale' => isset($options['is_on_sale']) ? $options['is_on_sale'] : false,
-            'is_recommended' => isset($options['is_recommended']) ? $options['is_recommended'] : false,
-            'can_pickup' => isset($options['can_pickup']) ? $options['can_pickup'] : false,
-            'status' => $status
-        ]);
+        return Product::create(
+            [
+                'company_uuid' => $this->company_uuid,
+                'primary_image_uuid' => $image instanceof File ? $image->uuid : null,
+                'created_by_uuid' => $createdBy instanceof User ? $createdBy->uuid : null,
+                'store_uuid' => $this->uuid,
+                'category_uuid' => $category instanceof Category ? $category->uuid : null,
+                'name' => $name,
+                'description' => $description,
+                'tags' => $tags,
+                'sku' => $sku,
+                'price' => $price,
+                'sale_price' => isset($options['sale_price']) ? $options['sale_price'] : null,
+                'currency' => $this->currency,
+                'is_service' => isset($options['is_service']) ? $options['is_service'] : false,
+                'is_bookable' => isset($options['is_bookable']) ? $options['is_bookable'] : false,
+                'is_available' => isset($options['is_available']) ? $options['is_available'] : true,
+                'is_on_sale' => isset($options['is_on_sale']) ? $options['is_on_sale'] : false,
+                'is_recommended' => isset($options['is_recommended']) ? $options['is_recommended'] : false,
+                'can_pickup' => isset($options['can_pickup']) ? $options['can_pickup'] : false,
+                'status' => $status
+            ]
+        );
     }
 
     public function createLocation($location, string $name = null, ?User $createdBy): ?StoreLocation
@@ -406,12 +414,14 @@ class Store extends BaseModel
         }
 
         if ($place instanceof Place) {
-            return StoreLocation::create([
-                'store_uuid' => $this->uuid,
-                'created_by_uuid' => $createdBy instanceof User ? $createdBy->uuid : null,
-                'place_uuid' => $place->uuid,
-                'name' => $name
-            ]);
+            return StoreLocation::create(
+                [
+                    'store_uuid' => $this->uuid,
+                    'created_by_uuid' => $createdBy instanceof User ? $createdBy->uuid : null,
+                    'place_uuid' => $place->uuid,
+                    'name' => $name
+                ]
+            );
         }
 
         return null;

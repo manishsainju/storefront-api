@@ -1,22 +1,14 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 
-class ProductAddonCategory extends BaseModel
+class ProductAddonCategory extends StorefrontModel
 {
     use HasUuid, HasApiModelBehavior;
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -72,7 +64,7 @@ class ProductAddonCategory extends BaseModel
      */
     public function category()
     {
-        return $this->setConnection('mysql')->belongsTo(AddonCategory::class)->with(['addons']);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(AddonCategory::class)->with(['addons']);
     }
 
     /**

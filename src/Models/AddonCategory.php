@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Models\Category;
 
@@ -18,6 +18,6 @@ class AddonCategory extends Category
      */
     public function addons()
     {
-        return $this->setConnection(config('storefront.api.db'))->hasMany(ProductAddon::class, 'category_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(ProductAddon::class, 'category_uuid');
     }
 }

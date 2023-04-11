@@ -1,24 +1,20 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
 use Fleetbase\Http\Requests\Storefront\AddStoreToNetworkCategory;
 use Fleetbase\Http\Requests\Storefront\NetworkActionRequest;
 use Fleetbase\Mail\StorefrontNetworkInvite as MailStorefrontNetworkInvite;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\Invite;
-use Fleetbase\Models\Storefront\Network;
-use Fleetbase\Models\Storefront\NetworkStore;
-use Fleetbase\Notifications\StorefrontNetworkInvite;
-use Fleetbase\Support\Resp;
+use Fleetbase\Storefront\Models\Network;
+use Fleetbase\Storefront\Models\NetworkStore;
 use Fleetbase\Support\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
-class NetworkController extends RESTController
+class NetworkController extends StorefrontController
 {
     /**
      * The resource to query
@@ -26,13 +22,6 @@ class NetworkController extends RESTController
      * @var string
      */
     public string $resource = 'networks';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
 
     /**
      * Updates a record with request payload

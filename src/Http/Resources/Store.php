@@ -1,8 +1,10 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
+use Illuminate\Support\Arr;
 
 class Store extends FleetbaseResource
 {
@@ -14,7 +16,9 @@ class Store extends FleetbaseResource
      */
     public function toArray($request)
     {
-        return [
+        $withMedia = $request->boolean('with_media');
+        $withLocations = $request->boolean('with_locations');
+        $store = [
             'id' => $this->public_id,
             'name' => $this->name,
             'description' => $this->description,
@@ -34,28 +38,65 @@ class Store extends FleetbaseResource
             'online' => $this->online,
             'is_network' => false,
             'is_store' => true,
-            'media' => $this->mapMedia($this->media),
-            'locations' => $this->locations->mapInto(StoreLocation::class),
             'slug' => $this->slug,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];
+
+        // modify for internal requests
+        if (Http::isInternalRequest()) {
+            $store['id'] = $this->id;
+
+            $store = Arr::insertAfterKey(
+                $store,
+                [
+                    'uuid' => $this->uuid,
+                    'public_id' => $this->public_id
+                ],
+                'id'
+            );
+        }
+
+        if ($withLocations) {
+            $store = Arr::insertAfterKey($store, $this->locations->mapInto(StoreLocation::class), 'is_store');
+        }
+
+        if ($withMedia) {
+            $store = Arr::insertAfterKey($store, $this->mapMedia($this->media), 'is_store');
+        }
+
+        return $store;
     }
 
-    public function mapMedia($medias = [])
+    /**
+     * Map the given collection of media objects to an array of formatted media data.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $medias The collection of media objects to map.
+     * @return array The array of formatted media data.
+     */
+    public function mapMedia(\Illuminate\Database\Eloquent\Collection $medias): array
     {
-        return collect($medias)->map(function ($media) {
-            return [
-                'id' => $media->public_id,
-                'filename' => $media->original_filename,
-                'type' => $media->content_type,
-                'caption' => $media->caption,
-                'url' => $media->s3url
-            ];
-        });
+        return array_map(
+            function ($media) {
+                return [
+                    'id' => data_get($media, 'public_id'),
+                    'filename' => data_get($media, 'original_filename'),
+                    'type' => data_get($media, 'content_type'),
+                    'caption' => data_get($media, 'caption'),
+                    'url' => data_get($media, 'url')
+                ];
+            },
+            $medias->toArray()
+        );
     }
 
-    public function formatOptions($options = [])
+    /**
+     * Format the given options array by removing excluded keys.
+     *
+     * @param mixed $options The options array to format.
+     * @return array The formatted options array.
+     */
+    public function formatOptions($options = []): array
     {
         if (!is_array($options)) {
             return [];

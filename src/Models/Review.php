@@ -1,15 +1,14 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\File;
 use Fleetbase\Models\Contact;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class Review extends BaseModel
+class Review extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior;
 
@@ -19,13 +18,6 @@ class Review extends BaseModel
      * @var string
      */
     protected $publicIdType = 'review';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -82,7 +74,7 @@ class Review extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -90,7 +82,7 @@ class Review extends BaseModel
      */
     public function customer()
     {
-        return $this->setConnection('mysql')->belongsTo(Contact::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Contact::class);
     }
 
     /**
@@ -106,7 +98,7 @@ class Review extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'key_uuid');
     }
 
     /**

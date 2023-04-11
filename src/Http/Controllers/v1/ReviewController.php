@@ -7,8 +7,8 @@ use Fleetbase\Http\Requests\Storefront\CreateReviewRequest;
 use Fleetbase\Http\Resources\Storefront\Review as StorefrontReview;
 use Fleetbase\Http\Resources\v1\DeletedResource;
 use Fleetbase\Models\File;
-use Fleetbase\Models\Storefront\Store;
-use Fleetbase\Models\Storefront\Review;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Models\Review;
 use Fleetbase\Support\Resp;
 use Fleetbase\Support\Storefront;
 use Fleetbase\Support\Utils;
@@ -173,7 +173,7 @@ class ReviewController extends Controller
         try {
             $review = Review::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Review resource not found.');
+            return response()->error('Review resource not found.');
         }
 
         // response the review resource
@@ -192,13 +192,13 @@ class ReviewController extends Controller
         $about = Storefront::about();
 
         if (!$customer) {
-            return Resp::error('Not authorized to create reviews');
+            return response()->error('Not authorized to create reviews');
         }
 
         $subject = Utils::resolveSubject($request->input('subject'));
 
         if (!$subject) {
-            return Resp::error('Invalid subject for review');
+            return response()->error('Invalid subject for review');
         }
 
         $review = Review::create([
@@ -259,7 +259,7 @@ class ReviewController extends Controller
         try {
             $review = Review::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Review resource not found.');
+            return response()->error('Review resource not found.');
         }
 
         // delete the review

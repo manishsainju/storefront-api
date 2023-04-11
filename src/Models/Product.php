@@ -1,9 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\File;
 use Fleetbase\Models\User;
@@ -17,7 +16,6 @@ use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Milon\Barcode\Facades\DNS2DFacade as DNS2D;
-// use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class ProductStatus
 {
@@ -25,7 +23,7 @@ class ProductStatus
     public const DRAFT = 'draft';
 }
 
-class Product extends BaseModel
+class Product extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, HasMetaAttributes, HasSlug, Searchable;
 
@@ -35,13 +33,6 @@ class Product extends BaseModel
      * @var string
      */
     protected $publicIdType = 'product';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -165,7 +156,7 @@ class Product extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -173,7 +164,7 @@ class Product extends BaseModel
      */
     public function category()
     {
-        return $this->setConnection('mysql')->belongsTo(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Category::class);
     }
 
     /**
@@ -181,7 +172,7 @@ class Product extends BaseModel
      */
     public function addonCategories()
     {
-        return $this->setConnection('mysql')->hasMany(ProductAddonCategory::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(ProductAddonCategory::class);
     }
 
     /**
@@ -189,7 +180,7 @@ class Product extends BaseModel
      */
     public function variants()
     {
-        return $this->setConnection('mysql')->hasMany(ProductVariant::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(ProductVariant::class);
     }
 
     /**
@@ -197,7 +188,7 @@ class Product extends BaseModel
      */
     public function primaryImage()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -205,7 +196,7 @@ class Product extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'key_uuid');
     }
 
     /**

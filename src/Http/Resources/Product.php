@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
 use Illuminate\Support\Str;

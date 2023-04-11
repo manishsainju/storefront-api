@@ -1,19 +1,18 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
 use ErrorException;
 use Exception;
-use Fleetbase\Http\Controllers\RESTController;
 use Fleetbase\Imports\ProductsImport;
 use Fleetbase\Jobs\DownloadProductImageUrl;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\File;
-use Fleetbase\Models\Storefront\Product;
-use Fleetbase\Models\Storefront\ProductAddonCategory;
-use Fleetbase\Models\Storefront\ProductVariant;
-use Fleetbase\Models\Storefront\ProductVariantOption;
-use Fleetbase\Models\Storefront\Store;
+use Fleetbase\Storefront\Models\Product;
+use Fleetbase\Storefront\Models\ProductAddonCategory;
+use Fleetbase\Storefront\Models\ProductVariant;
+use Fleetbase\Storefront\Models\ProductVariantOption;
+use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Support\Resp;
 use Fleetbase\Support\Utils;
 use Illuminate\Http\Request;
@@ -21,7 +20,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProductController extends RESTController
+class ProductController extends StorefrontController
 {
     /**
      * The resource to query
@@ -29,13 +28,6 @@ class ProductController extends RESTController
      * @var string
      */
     public string $resource = 'products';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
 
     /**
      * Creates a record with request payload
@@ -105,13 +97,13 @@ class ProductController extends RESTController
         foreach ($files as $file) {
             // validate file type
             if (!Str::endsWith($file->path, $validFileTypes)) {
-                return Resp::error('Invalid file uploaded, must be one of the following: ' . implode(', ', $validFileTypes));
+                return response()->error('Invalid file uploaded, must be one of the following: ' . implode(', ', $validFileTypes));
             }
 
             try {
                 $data = Excel::toArray(new ProductsImport(), $file->path, 's3');
             } catch (Exception $e) {
-                return Resp::error('Invalid file, unable to proccess.');
+                return response()->error('Invalid file, unable to proccess.');
             }
 
             $data = Arr::first($data);

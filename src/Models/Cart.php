@@ -1,10 +1,9 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Exception;
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\Contact;
 use Fleetbase\Support\Utils;
@@ -17,7 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use stdClass;
 
-class Cart extends BaseModel
+class Cart extends StorefrontModel
 {
     use HasUuid, HasPublicId, HasApiModelBehavior, Expirable;
 
@@ -27,13 +26,6 @@ class Cart extends BaseModel
      * @var string
      */
     protected $publicIdType = 'cart';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -62,7 +54,6 @@ class Cart extends BaseModel
      * @var array
      */
     protected $casts = [
-        // 'items' => Json::class,
         'expires_at' => 'datetime'
     ];
 
@@ -78,15 +69,16 @@ class Cart extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection(config('fleetbase.api.db'))->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
+     * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->setConnection(config('fleetbase.api.db'))->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -94,7 +86,7 @@ class Cart extends BaseModel
      */
     public function customer()
     {
-        return $this->setConnection(config('fleetbase.api.db'))->belongsTo(Contact::class, 'public_id');
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Contact::class, 'public_id');
     }
 
     /**

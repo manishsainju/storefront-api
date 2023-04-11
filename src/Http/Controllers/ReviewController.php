@@ -1,10 +1,9 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
 
-class ReviewController extends RESTController
+class ReviewController extends StorefrontController
 {
     /**
      * The resource to query
@@ -12,11 +11,4 @@ class ReviewController extends RESTController
      * @var string
      */
     public string $resource = 'reviews';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
 }

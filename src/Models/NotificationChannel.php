@@ -1,10 +1,9 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
 use Fleetbase\Casts\PolymorphicType;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Support\Utils;
@@ -13,16 +12,9 @@ use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Illuminate\Support\Str;
 
-class NotificationChannel extends BaseModel
+class NotificationChannel extends StorefrontModel
 {
     use HasUuid, HasApiModelBehavior, HasOptionsAttributes;
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -77,7 +69,7 @@ class NotificationChannel extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -85,7 +77,7 @@ class NotificationChannel extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -93,7 +85,7 @@ class NotificationChannel extends BaseModel
      */
     public function certificate()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**

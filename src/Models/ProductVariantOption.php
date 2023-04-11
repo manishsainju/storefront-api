@@ -1,16 +1,15 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Support\Utils;
 use Fleetbase\Traits\HasMetaAttributes;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class ProductVariantOption extends BaseModel
+class ProductVariantOption extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasMetaAttributes, HasApiModelBehavior;
 
@@ -20,13 +19,6 @@ class ProductVariantOption extends BaseModel
      * @var string
      */
     protected $publicIdType = 'variant_option';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.

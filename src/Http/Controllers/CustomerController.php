@@ -2,13 +2,12 @@
 
 namespace Fleetbase\Storefront\Http\Controllers;
 
-
-class StoreLocationController extends StorefrontController
+class CustomerController extends StorefrontController
 {
     /**
      * The resource to query
      *
      * @var string
      */
-    public string $resource = 'store_locations';
+    public $resource = 'customer';
 }

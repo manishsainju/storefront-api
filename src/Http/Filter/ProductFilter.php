@@ -1,33 +1,28 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Filters\Storefront;
+namespace Fleetbase\Storefront\Http\Filter;
 
-use Fleetbase\Models\Category;
+use Fleetbase\Http\Filter\Filter;
 
-class ProductFilter
+class ProductFilter extends Filter
 {
-    /**
-     * Apply the filters to a given Eloquent query builder and request.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Http\Request     $request
-     * @param  \Fleetbase\Models\Storefront\Product  $model
-     * @return void
-     */
-    public static function apply($query, $request, $model)
+    public function queryForInternal()
     {
-        // Query only this company sessions resources
-        $query->where('company_uuid', session('company'));
+        $this->builder->where('company_uuid', $this->request->session()->get('company'));
+    }
 
-        // Query by category slug
-        if ($request->filled('category_slug')) {
-            $category = Category::where(['slug' => $request->input('category_slug'), 'for' => 'storefront_product'])->first();
-
-            if($category) {
-                $query->where('category_uuid', $category->uuid);
+    public function categorySlug(?string $categorySlug)
+    {
+        $this->builder->whereHas(
+            'category',
+            function ($query) use ($categorySlug) {
+                $query->where(
+                    [
+                        'slug' => $categorySlug,
+                        'for' => 'storefront_product'
+                    ]
+                );
             }
-        }
-
-        return $query;
+        );
     }
 }

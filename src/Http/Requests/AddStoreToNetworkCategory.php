@@ -1,8 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Http\Requests\Storefront;
+namespace Fleetbase\Storefront\Http\Requests;
 
-use Fleetbase\Http\Requests\Request;
+use Fleetbase\Http\Requests\FleetbaseRequest;
 
 class AddStoreToNetworkCategory extends FleetbaseRequest
 {

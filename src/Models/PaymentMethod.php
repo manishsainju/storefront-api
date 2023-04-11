@@ -1,16 +1,15 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class PaymentMethod extends BaseModel
+class PaymentMethod extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior;
 
@@ -20,13 +19,6 @@ class PaymentMethod extends BaseModel
      * @var string
      */
     protected $publicIdType = 'payment_method';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -70,7 +62,7 @@ class PaymentMethod extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -78,7 +70,7 @@ class PaymentMethod extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -86,7 +78,7 @@ class PaymentMethod extends BaseModel
      */
     public function owner()
     {
-        return $this->setConnection('mysql')->morphTo(__FUNCTION__, 'owner_type', 'owner_uuid')->withoutGlobalScopes();
+        return $this->setConnection(config('fleetbase.connection.db'))->morphTo(__FUNCTION__, 'owner_type', 'owner_uuid')->withoutGlobalScopes();
     }
 
     /**

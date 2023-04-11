@@ -38,7 +38,7 @@ class CustomerController extends Controller
         $customer = Storefront::getCustomerFromToken();
 
         if (!$customer) {
-            return Resp::error('Not authorized to register device for cutomer');
+            return response()->error('Not authorized to register device for cutomer');
         }
 
         $device = UserDevice::firstOrCreate(
@@ -54,7 +54,7 @@ class CustomerController extends Controller
             ]
         );
 
-        return Resp::json([
+        return response()->json([
             'status' => 'OK',
             'device' => $device->public_id
         ]);
@@ -71,7 +71,7 @@ class CustomerController extends Controller
         $customer = Storefront::getCustomerFromToken();
 
         if (!$customer) {
-            return Resp::error('Not authorized to view customers orders');
+            return response()->error('Not authorized to view customers orders');
         }
 
         $results = Order::queryFromRequest($request, function (&$query) use ($customer, $request) {
@@ -100,7 +100,7 @@ class CustomerController extends Controller
         $customer = Storefront::getCustomerFromToken();
 
         if (!$customer) {
-            return Resp::error('Not authorized to view customers places');
+            return response()->error('Not authorized to view customers places');
         }
 
         $results = Place::queryFromRequest($request, function (&$query) use ($customer) {
@@ -126,7 +126,7 @@ class CustomerController extends Controller
 
         // validate identity
         if ($mode === 'email' && !$isEmail) {
-            return Resp::error('Invalid email provided for identity');
+            return response()->error('Invalid email provided for identity');
         }
 
         // prepare phone number
@@ -177,7 +177,7 @@ class CustomerController extends Controller
         $isVerified = VerificationCode::where(['code' => $code, 'for' => 'storefront_create_customer', 'meta->identity' => $identity])->exists();
 
         if (!$isVerified) {
-            return Resp::error('Invalid verification code provided!');
+            return response()->error('Invalid verification code provided!');
         }
 
         // check for existing user to attach contact to
@@ -216,7 +216,7 @@ class CustomerController extends Controller
         try {
             $token = $user->createToken($customer->uuid);
         } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+            return response()->error($e->getMessage());
         }
 
         $customer->token = $token->plainTextToken;
@@ -242,7 +242,7 @@ class CustomerController extends Controller
         try {
             $contact = Contact::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Customer resource not found.');
+            return response()->error('Customer resource not found.');
         }
 
         // get request input
@@ -289,7 +289,7 @@ class CustomerController extends Controller
         try {
             $contact = Contact::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Customer resource not found.');
+            return response()->error('Customer resource not found.');
         }
 
         // response the customer resource
@@ -312,7 +312,7 @@ class CustomerController extends Controller
         try {
             $contact = Contact::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Customer resource not found.');
+            return response()->error('Customer resource not found.');
         }
 
         // delete the product
@@ -337,7 +337,7 @@ class CustomerController extends Controller
         $user = User::where('email', $identity)->orWhere('phone', static::phone($identity))->first();
 
         if (!Hash::check($password, $user->password)) {
-            return Resp::error('Authentication failed using password provided.', 401);
+            return response()->error('Authentication failed using password provided.', 401);
         }
 
         // get the storefront or network logging in for 
@@ -364,7 +364,7 @@ class CustomerController extends Controller
         try {
             $token = $user->createToken($contact->uuid);
         } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+            return response()->error($e->getMessage());
         }
 
         $contact->token = $token->plainTextToken;
@@ -386,7 +386,7 @@ class CustomerController extends Controller
         $user = User::where('phone', $phone)->whereNull('deleted_at')->withoutGlobalScopes()->first();
 
         if (!$user) {
-            return Resp::error('No customer with this phone # found.');
+            return response()->error('No customer with this phone # found.');
         }
 
         // get the storefront or network logging in for 
@@ -421,14 +421,14 @@ class CustomerController extends Controller
         $user = User::where('phone', $identity)->orWhere('email', $identity)->first();
 
         if (!$user) {
-            return Resp::error('Unable to verify code.');
+            return response()->error('Unable to verify code.');
         }
 
         // find and verify code
         $verificationCode = VerificationCode::where(['subject_uuid' => $user->uuid, 'code' => $code, 'for' => $for])->exists();
 
         if (!$verificationCode && $code !== '999000') {
-            return Resp::error('Invalid verification code!');
+            return response()->error('Invalid verification code!');
         }
 
         // get the storefront or network logging in for 
@@ -455,7 +455,7 @@ class CustomerController extends Controller
         try {
             $token = $user->createToken($contact->uuid);
         } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+            return response()->error($e->getMessage());
         }
 
         $contact->token = $token->plainTextToken;

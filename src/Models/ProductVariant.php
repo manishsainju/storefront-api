@@ -1,9 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\User;
 use Fleetbase\Traits\HasMetaAttributes;
@@ -13,7 +12,7 @@ use Fleetbase\Traits\HasPublicid;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class ProductVariant extends BaseModel
+class ProductVariant extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, HasMetaAttributes, HasSlug;
 
@@ -23,13 +22,6 @@ class ProductVariant extends BaseModel
      * @var string
      */
     protected $publicIdType = 'variant';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -104,7 +96,7 @@ class ProductVariant extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -112,7 +104,7 @@ class ProductVariant extends BaseModel
      */
     public function category()
     {
-        return $this->setConnection('mysql')->belongsTo(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Category::class);
     }
 
     /**

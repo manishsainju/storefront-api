@@ -6,7 +6,7 @@ use Fleetbase\Http\Controllers\Controller;
 use Fleetbase\Http\Resources\Storefront\Product as StorefrontProduct;
 use Fleetbase\Http\Resources\v1\DeletedResource;
 use Fleetbase\Models\Category;
-use Fleetbase\Models\Storefront\Product;
+use Fleetbase\Storefront\Models\Product;
 use Fleetbase\Support\Resp;
 // use Fleetbase\Support\Utils;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -65,7 +65,7 @@ class ProductController extends Controller
         try {
             $product = Product::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Product resource not found.');
+            return response()->error('Product resource not found.');
         }
 
         // response the product resource
@@ -84,7 +84,7 @@ class ProductController extends Controller
         try {
             $product = Product::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Product resource not found.');
+            return response()->error('Product resource not found.');
         }
 
         // delete the product

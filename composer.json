@@ -33,7 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Fleetbase\\Tests\\": "tests/"
+            "Fleetbase\\Storefront\\Tests\\": "tests/"
         }
     },
     "repositories": [

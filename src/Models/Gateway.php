@@ -1,9 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\File;
@@ -12,7 +11,7 @@ use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class Gateway extends BaseModel
+class Gateway extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior;
 
@@ -22,13 +21,6 @@ class Gateway extends BaseModel
      * @var string
      */
     protected $publicIdType = 'gateway';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -81,7 +73,7 @@ class Gateway extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -89,7 +81,7 @@ class Gateway extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -105,7 +97,7 @@ class Gateway extends BaseModel
      */
     public function logoFile()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**

@@ -1,9 +1,8 @@
 <?php
 
-namespace Fleetbase\Storefront\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\ServiceQuote;
 use Fleetbase\Support\Utils;
@@ -12,7 +11,7 @@ use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasPublicid;
 use Illuminate\Support\Str;
 
-class Checkout extends BaseModel
+class Checkout extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasOptionsAttributes;
 
@@ -22,13 +21,6 @@ class Checkout extends BaseModel
      * @var string
      */
     protected $publicIdType = 'chkt';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -85,7 +77,7 @@ class Checkout extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -93,7 +85,7 @@ class Checkout extends BaseModel
      */
     public function order()
     {
-        return $this->setConnection('mysql')->belongsTo(Order::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Order::class);
     }
 
     /**
@@ -101,7 +93,7 @@ class Checkout extends BaseModel
      */
     public function owner()
     {
-        return $this->setConnection('mysql')->morphTo(__FUNCTION__, 'owner_type', 'owner_uuid')->withoutGlobalScopes();
+        return $this->setConnection(config('fleetbase.connection.db'))->morphTo(__FUNCTION__, 'owner_type', 'owner_uuid')->withoutGlobalScopes();
     }
 
     /**
@@ -109,7 +101,7 @@ class Checkout extends BaseModel
      */
     public function serviceQuote()
     {
-        return $this->setConnection('mysql')->belongsTo(ServiceQuote::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(ServiceQuote::class);
     }
 
     /**

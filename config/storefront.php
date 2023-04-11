@@ -9,9 +9,11 @@ return [
     'api' => [
         'version' => '0.0.1',
         'routing' => [
-            'prefix' => null,
+            'prefix' => 'storefront',
             'internal_prefix' => 'int'
         ],
-        'db' => env('STOREFRONT_DB_CONNECTION', null)
+    ],
+    'db' => [
+        'connection' => env('STOREFRONT_DB_CONNECTION', null)
     ]
 ];

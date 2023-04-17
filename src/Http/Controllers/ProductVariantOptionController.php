@@ -10,5 +10,5 @@ class ProductVariantOptionController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'product_variant_option';
+    public $resource = 'product_variant_option';
 }

@@ -2,15 +2,10 @@
 
 namespace Fleetbase\Storefront\Http\Filter;
 
-use Fleetbase\Http\Filter\Filter;
+use Fleetbase\FleetOps\Http\Filter\ContactFilter;
 
-class CustomerFilter extends Filter
+class CustomerFilter extends ContactFilter
 {
-    public function queryForInternal()
-    {
-        $this->builder->where('company_uuid', $this->request->session()->get('company'));
-    }
-
     public function storefront($storefront)
     {
         $this->builder->whereHas(

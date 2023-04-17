@@ -2,13 +2,19 @@
 
 namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Models\Order;
-use Fleetbase\Notifications\StorefrontOrderPreparing;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\Storefront\Notifications\StorefrontOrderPreparing;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class OrderController extends StorefrontController
 {
+    /**
+     * The resource to query
+     *
+     * @var string
+     */
+    public $resource = 'order';
+
     /**
      * Accept an order by incrementing status to preparing.
      *
@@ -136,16 +142,5 @@ class OrderController extends Controller
             'order' => $order->public_id,
             'status' => $order->status
         ]);
-    }
-
-    /**
-     * Base CORS options
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function options()
-    {
-        return response()
-            ->json('OPTIONS');
     }
 }

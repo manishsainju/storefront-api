@@ -113,7 +113,7 @@ class StoreLocation extends StorefrontModel
      */
     public function getAddressAttribute()
     {
-        return static::attributeFromCache($this, 'place.address');
+        return $this->fromCache('place.address');
     }
 
     /**

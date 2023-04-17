@@ -21,6 +21,15 @@ if (!class_exists(FleetOpsServiceProvider::class)) {
 class StorefrontServiceProvider extends CoreServiceProvider
 {
     /**
+     * The observers registered with the service provider.
+     *
+     * @var array
+     */
+    public $observers = [
+        \Fleetbase\Storefront\Models\Product::class => \Fleetbase\Storefront\Observers\ProductObserver::class
+    ];
+
+    /**
      * Bootstrap any package services.
      *
      * @return void
@@ -33,5 +42,6 @@ class StorefrontServiceProvider extends CoreServiceProvider
         $this->registerExpansionsFrom(__DIR__ . '/../Expansions');
         $this->loadRoutesFrom(__DIR__ . '/../routes.php');
         $this->mergeConfigFrom(__DIR__ . '/../../config/storefront.php', 'storefront');
+        $this->registerObservers();
     }
 }

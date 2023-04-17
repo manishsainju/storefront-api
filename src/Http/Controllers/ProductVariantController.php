@@ -10,5 +10,5 @@ class ProductVariantController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'product_variants';
+    public $resource = 'product_variants';
 }

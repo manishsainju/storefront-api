@@ -9,5 +9,5 @@ class GatewayController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'gateway';
+    public $resource = 'gateway';
 }

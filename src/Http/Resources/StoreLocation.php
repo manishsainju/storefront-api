@@ -3,7 +3,9 @@
 namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\FleetOps\Http\Resources\v1\Place;
+use Fleetbase\FleetOps\Http\Resources\Internal\v1\Place as InternalPlace;
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class StoreLocation extends FleetbaseResource
 {
@@ -15,34 +17,17 @@ class StoreLocation extends FleetbaseResource
      */
     public function toArray($request)
     {
-        $storeLocation = [
-            'id' => $this->public_id,
-            'store' => $this->store->public_id,
+        return [
+            'id' => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
+            'store' => data_get($this, 'store.public_id'),
+            'store_data' => $this->when($request->boolean('with_store'), new Store($this->store)),
             'name' => $this->name,
-            'place' => $this->place ? new Place($this->place) : null,
-            'hours' => $this->mapHours($this->hours),
-        ];
-
-        if ($request->input('with_store') === true && $this->store) {
-            $storeLocation['store'] = new Store($this->store);
-        }
-
-        $storeLocation = array_merge($storeLocation, [
+            'place' =>  $this->when(Http::isInternalRequest(), new InternalPlace($this->place), new Place($this->place)),
+            'hours' => StoreHour::collection($this->hours),
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
-        ]);
-
-        return $storeLocation;
-    }
-
-    public function mapHours($hours = [])
-    {
-        return collect($hours)->map(function ($hour) {
-            return [
-                'day' => $hour->day_of_week,
-                'start' => $hour->start,
-                'end' => $hour->end,
-            ];
-        });
+            'updated_at' => $this->updated_at,
+        ];
     }
 }

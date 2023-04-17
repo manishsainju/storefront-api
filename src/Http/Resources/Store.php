@@ -4,7 +4,6 @@ namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
 use Fleetbase\Support\Http;
-use Illuminate\Support\Arr;
 
 class Store extends FleetbaseResource
 {
@@ -16,10 +15,10 @@ class Store extends FleetbaseResource
      */
     public function toArray($request)
     {
-        $withMedia = $request->boolean('with_media');
-        $withLocations = $request->boolean('with_locations');
-        $store = [
-            'id' => $this->public_id,
+        return [
+            'id' => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
             'name' => $this->name,
             'description' => $this->description,
             'translations' => $this->translations ?? [],
@@ -38,56 +37,12 @@ class Store extends FleetbaseResource
             'online' => $this->online,
             'is_network' => false,
             'is_store' => true,
+            'locations' => $this->when($request->boolean('with_locations'), $this->locations->mapInto(StoreLocation::class)),
+            'media' => $this->when($request->boolean('with_media'), Media::collection($this->media)),
             'slug' => $this->slug,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
-
-        // modify for internal requests
-        if (Http::isInternalRequest()) {
-            $store['id'] = $this->id;
-
-            $store = Arr::insertAfterKey(
-                $store,
-                [
-                    'uuid' => $this->uuid,
-                    'public_id' => $this->public_id
-                ],
-                'id'
-            );
-        }
-
-        if ($withLocations) {
-            $store = Arr::insertAfterKey($store, $this->locations->mapInto(StoreLocation::class), 'is_store');
-        }
-
-        if ($withMedia) {
-            $store = Arr::insertAfterKey($store, $this->mapMedia($this->media), 'is_store');
-        }
-
-        return $store;
-    }
-
-    /**
-     * Map the given collection of media objects to an array of formatted media data.
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $medias The collection of media objects to map.
-     * @return array The array of formatted media data.
-     */
-    public function mapMedia(\Illuminate\Database\Eloquent\Collection $medias): array
-    {
-        return array_map(
-            function ($media) {
-                return [
-                    'id' => data_get($media, 'public_id'),
-                    'filename' => data_get($media, 'original_filename'),
-                    'type' => data_get($media, 'content_type'),
-                    'caption' => data_get($media, 'caption'),
-                    'url' => data_get($media, 'url')
-                ];
-            },
-            $medias->toArray()
-        );
     }
 
     /**

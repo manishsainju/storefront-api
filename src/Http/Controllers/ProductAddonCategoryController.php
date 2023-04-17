@@ -10,5 +10,5 @@ class ProductAddonCategoryController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'product_addon_category';
+    public $resource = 'product_addon_category';
 }

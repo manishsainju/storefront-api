@@ -3,6 +3,7 @@
 namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class Gateway extends FleetbaseResource
 {
@@ -15,7 +16,9 @@ class Gateway extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => $this->public_id,
+            'id' => $this->when(Http::isInternalRequest(), $this->id,$this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
             'name' => $this->name,
             'description' => $this->description,
             'logo_url' => $this->logo_url,

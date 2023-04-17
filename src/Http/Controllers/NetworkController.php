@@ -2,15 +2,14 @@
 
 namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Requests\Storefront\AddStoreToNetworkCategory;
-use Fleetbase\Http\Requests\Storefront\NetworkActionRequest;
-use Fleetbase\Mail\StorefrontNetworkInvite as MailStorefrontNetworkInvite;
-use Fleetbase\Models\Category;
-use Fleetbase\Models\Invite;
+use Fleetbase\Storefront\Http\Requests\AddStoreToNetworkCategory;
+use Fleetbase\Storefront\Http\Requests\NetworkActionRequest;
+use Fleetbase\Storefront\Mail\StorefrontNetworkInvite;
 use Fleetbase\Storefront\Models\Network;
 use Fleetbase\Storefront\Models\NetworkStore;
+use Fleetbase\Models\Category;
+use Fleetbase\Models\Invite;
 use Fleetbase\Support\Utils;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -21,28 +20,7 @@ class NetworkController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'networks';
-
-    /**
-     * Updates a record with request payload
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function updateRecord(Request $request)
-    {
-        return $this->model::updateRecordFromRequest($request, function (&$request, Network &$network, &$input) {
-            $network->flushAttributesCache();
-            $alertable = $request->input('network.alertable', []);
-
-            // set alertables to public_id
-            $input['alertable'] = collect($alertable)->mapWithKeys(function ($alertables, $key) {
-                return [$key => collect($alertables)->map(function ($user) {
-                    return $user['public_id'];
-                })->values()->toArray()];
-            })->toArray();
-        });
-    }
+    public $resource = 'networks';
 
     /**
      * Find network by public_id or invitation code.
@@ -96,7 +74,7 @@ class NetworkController extends StorefrontController
         $invitation->setRelation('createdBy', $request->user());
 
         // send invite
-        Mail::send(new MailStorefrontNetworkInvite($invitation));
+        Mail::send(new StorefrontNetworkInvite($invitation));
 
         return response()->json(['status' => 'ok']);
     }

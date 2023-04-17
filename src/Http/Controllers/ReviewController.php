@@ -10,5 +10,5 @@ class ReviewController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'reviews';
+    public $resource = 'reviews';
 }

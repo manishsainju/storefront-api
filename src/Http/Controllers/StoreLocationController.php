@@ -10,5 +10,5 @@ class StoreLocationController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'store_locations';
+    public $resource = 'store_locations';
 }

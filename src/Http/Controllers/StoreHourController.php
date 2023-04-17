@@ -10,5 +10,5 @@ class StoreHourController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'store_hours';
+    public $resource = 'store_hours';
 }

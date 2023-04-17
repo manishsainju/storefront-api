@@ -9,5 +9,5 @@ class NotificationChannelController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'notification_channel';
+    public $resource = 'notification_channel';
 }

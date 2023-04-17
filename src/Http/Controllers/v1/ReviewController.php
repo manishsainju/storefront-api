@@ -228,8 +228,8 @@ class ReviewController extends Controller
                 $file = File::create([
                     'company_uuid' => session('company'),
                     'uploader_uuid' => $customer->user_uuid,
-                    'key_uuid' => $review->uuid,
-                    'key_type' => Utils::getMutationType($review),
+                    'subject_uuid' => $review->uuid,
+                    'subject_type' => Utils::getMutationType($review),
                     'name' => basename($bucketPath),
                     'original_filename' => basename($bucketPath),
                     'extension' => $extension,

@@ -8,7 +8,7 @@ class StoreFilter extends Filter
 {
     public function queryForInternal()
     {
-        $this->builder->where('company_uuid', $this->request->session()->get('company'));
+        $this->builder->where('company_uuid', $this->session->get('company'));
     }
 
     public function network(?string $network)

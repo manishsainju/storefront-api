@@ -105,7 +105,7 @@ class Gateway extends StorefrontModel
      */
     public function getLogoUrlAttribute()
     {
-        $default = $this->logoFile->s3url ?? null;
+        $default = $this->logoFile->url ?? null;
         $backup = 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
 
         return $default ?? $backup;
@@ -149,16 +149,17 @@ class Gateway extends StorefrontModel
      *
      * @return Gateway
      */
-    public static function cash($sandbox = 0): Gateway
+    public static function cash($attributes = ['sandbox' => 0]): Gateway
     {
         return new static([
             'public_id' => 'gateway_cash',
             'name' => 'Cash',
             'code' => 'cash',
             'type' => 'cash',
-            'sandbox' => $sandbox,
+            'sandbox' => $attributes['sandbox'],
             'return_url' => null,
-            'callback_url' => null
+            'callback_url' => null,
+            ...$attributes
         ]);
     }
 }

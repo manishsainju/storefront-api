@@ -9,5 +9,5 @@ class AddonCategoryController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'addon_category';
+    public $resource = 'addon_category';
 }

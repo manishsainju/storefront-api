@@ -136,7 +136,7 @@ class Store extends StorefrontModel
      */
     public function files()
     {
-        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'subject_uuid');
     }
 
     /**
@@ -244,7 +244,7 @@ class Store extends StorefrontModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function paymentGateways()
+    public function gateways()
     {
         return $this->hasMany(Gateway::class, 'owner_uuid');
     }

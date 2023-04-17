@@ -10,5 +10,5 @@ class VoteController extends StorefrontController
      *
      * @var string
      */
-    public string $resource = 'votes';
+    public $resource = 'votes';
 }

@@ -3,10 +3,11 @@
 namespace Fleetbase\Storefront\Http\Controllers;
 
 use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\FleetOps\Http\Controllers\Internal\v1\OrderController as FleetbaseOrderController;
 use Fleetbase\Storefront\Notifications\StorefrontOrderPreparing;
 use Illuminate\Http\Request;
 
-class OrderController extends StorefrontController
+class OrderController extends FleetbaseOrderController
 {
     /**
      * The resource to query
@@ -14,6 +15,13 @@ class OrderController extends StorefrontController
      * @var string
      */
     public $resource = 'order';
+
+    /**
+     * The filter to use
+     *
+     * @var \Fleetbase\Http\Filter\Filter
+     */
+    public $filter = \Fleetbase\Storefront\Http\Filter\OrderFilter::class;
 
     /**
      * Accept an order by incrementing status to preparing.

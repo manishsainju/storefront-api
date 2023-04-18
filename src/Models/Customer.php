@@ -12,7 +12,7 @@ class Customer extends Contact
      *
      * @var string
      */
-    protected string $payloadKey = 'storefront_customer';
+    protected string $payloadKey = 'customer';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

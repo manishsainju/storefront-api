@@ -19,6 +19,7 @@ class Store extends FleetbaseResource
             'id' => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
             'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
             'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
+            'key' => $this->when(Http::isInternalRequest(), $this->key),
             'name' => $this->name,
             'description' => $this->description,
             'translations' => $this->translations ?? [],

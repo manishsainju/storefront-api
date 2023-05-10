@@ -13,7 +13,7 @@ return [
             'internal_prefix' => 'int'
         ],
     ],
-    'db' => [
-        'connection' => env('STOREFRONT_DB_CONNECTION', null)
+    'connection' => [
+        'db' => env('STOREFRONT_DB_CONNECTION', 'storefront')
     ]
 ];

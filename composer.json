@@ -56,6 +56,9 @@
             "providers": [
                 "Fleetbase\\Storefront\\Providers\\StorefrontServiceProvider"
             ]
+        },
+        "fleetbase": {
+            "create-database": "storefront"
         }
     },
     "config": {

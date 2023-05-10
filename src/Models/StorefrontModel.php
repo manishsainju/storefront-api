@@ -17,6 +17,6 @@ class StorefrontModel extends Model
     {
         parent::__construct($attributes);
 
-        $this->connection = config('storefront.db.connection');
+        $this->connection = config('storefront.connection.db');
     }
 }

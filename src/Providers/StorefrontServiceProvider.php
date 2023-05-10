@@ -26,7 +26,8 @@ class StorefrontServiceProvider extends CoreServiceProvider
      * @var array
      */
     public $observers = [
-        \Fleetbase\Storefront\Models\Product::class => \Fleetbase\Storefront\Observers\ProductObserver::class
+        \Fleetbase\Storefront\Models\Product::class => \Fleetbase\Storefront\Observers\ProductObserver::class,
+        \Fleetbase\Storefront\Models\Network::class => \Fleetbase\Storefront\Observers\NetworkObserver::class,
     ];
 
     /**
@@ -39,9 +40,11 @@ class StorefrontServiceProvider extends CoreServiceProvider
      */
     public function boot()
     {
+        $this->registerObservers();
         $this->registerExpansionsFrom(__DIR__ . '/../Expansions');
         $this->loadRoutesFrom(__DIR__ . '/../routes.php');
+        $this->loadMigrationsFrom(__DIR__ . '/../../migrations');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/database.connections.php', 'database.connections');
         $this->mergeConfigFrom(__DIR__ . '/../../config/storefront.php', 'storefront');
-        $this->registerObservers();
     }
 }

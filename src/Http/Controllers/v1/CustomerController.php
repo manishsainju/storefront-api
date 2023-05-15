@@ -2,24 +2,22 @@
 
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
-use Exception;
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\CreateCustomerRequest;
-use Fleetbase\Http\Requests\Storefront\VerifyCreateCustomerRequest;
-use Fleetbase\Http\Requests\UpdateContactRequest;
-use Fleetbase\Http\Resources\Storefront\Customer;
-use Fleetbase\Http\Resources\v1\DeletedResource;
-use Fleetbase\Http\Resources\v1\Order as OrderResource;
-use Fleetbase\Http\Resources\v1\Place as PlaceResource;
-use Fleetbase\Models\Contact;
-use Fleetbase\Models\Order;
-use Fleetbase\Models\Place;
+use Fleetbase\Storefront\Http\Requests\CreateCustomerRequest;
+use Fleetbase\Storefront\Http\Requests\VerifyCreateCustomerRequest;
+use Fleetbase\Storefront\Http\Resources\Customer;
+use Fleetbase\Storefront\Support\Storefront;
+use Fleetbase\FleetOps\Http\Requests\UpdateContactRequest;
+use Fleetbase\FleetOps\Http\Resources\v1\DeletedResource;
+use Fleetbase\FleetOps\Http\Resources\v1\Order as OrderResource;
+use Fleetbase\FleetOps\Http\Resources\v1\Place as PlaceResource;
+use Fleetbase\FleetOps\Models\Contact;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Models\User;
 use Fleetbase\Models\UserDevice;
 use Fleetbase\Models\VerificationCode;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
-use Fleetbase\Support\Utils;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -74,7 +72,7 @@ class CustomerController extends Controller
             return response()->error('Not authorized to view customers orders');
         }
 
-        $results = Order::queryFromRequest($request, function (&$query) use ($customer, $request) {
+        $results = Order::queryWithRequest($request, function (&$query) use ($customer, $request) {
             $query->where('customer_uuid', $customer->uuid)->whereNull('deleted_at')->withoutGlobalScopes();
 
             // dont query any master orders if its a network
@@ -103,7 +101,7 @@ class CustomerController extends Controller
             return response()->error('Not authorized to view customers places');
         }
 
-        $results = Place::queryFromRequest($request, function (&$query) use ($customer) {
+        $results = Place::queryWithRequest($request, function (&$query) use ($customer) {
             $query->where('owner_uuid', $customer->uuid);
         });
 
@@ -113,7 +111,7 @@ class CustomerController extends Controller
     /**
      * Setups a verification request to create a new storefront customer.
      *
-     * @param  \Fleetbase\Http\Requests\Storefront\VerifyCreateCustomerRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\VerifyCreateCustomerRequest  $request
      * @return \Fleetbase\Http\Resources\Contact
      */
     public function requestCustomerCreationCode(VerifyCreateCustomerRequest $request)
@@ -157,7 +155,7 @@ class CustomerController extends Controller
     /**
      * Creates a new Storefront Customer resource.
      *
-     * @param  \Fleetbase\Http\Requests\Storefront\CreateCustomerRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\CreateCustomerRequest  $request
      * @return \Fleetbase\Http\Resources\Contact
      */
     public function create(CreateCustomerRequest $request)
@@ -215,7 +213,7 @@ class CustomerController extends Controller
         // generate auth token
         try {
             $token = $user->createToken($customer->uuid);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 
@@ -266,7 +264,7 @@ class CustomerController extends Controller
      */
     public function query(Request $request)
     {
-        $results = Contact::queryFromRequest($request, function (&$query, $request) {
+        $results = Contact::queryWithRequest($request, function (&$query, $request) {
             $query->where(['type' => 'customer']);
         });
 
@@ -363,7 +361,7 @@ class CustomerController extends Controller
         // generate auth token
         try {
             $token = $user->createToken($contact->uuid);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 
@@ -454,7 +452,7 @@ class CustomerController extends Controller
         // generate auth token
         try {
             $token = $user->createToken($contact->uuid);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 

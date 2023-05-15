@@ -3,17 +3,16 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Gateway as GatewayResource;
-use Fleetbase\Http\Resources\Storefront\Network;
-use Fleetbase\Http\Resources\Storefront\Product as ProductResource;
-use Fleetbase\Http\Resources\Storefront\Store as StorefrontStore;
-use Fleetbase\Http\Resources\Storefront\StoreLocation as StoreLocationResource;
+use Fleetbase\Storefront\Http\Resources\Gateway as GatewayResource;
+use Fleetbase\Storefront\Http\Resources\Network;
+use Fleetbase\Storefront\Http\Resources\Product as ProductResource;
+use Fleetbase\Storefront\Http\Resources\Store as StorefrontStore;
+use Fleetbase\Storefront\Http\Resources\StoreLocation as StoreLocationResource;
 use Fleetbase\Storefront\Models\Gateway;
 use Fleetbase\Storefront\Models\Product;
 use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\StoreLocation;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
+use Fleetbase\Storefront\Support\Storefront;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 

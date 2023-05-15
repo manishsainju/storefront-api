@@ -54,7 +54,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Fleetbase\\Storefront\\Providers\\StorefrontServiceProvider"
+                "Fleetbase\\Storefront\\Providers\\StorefrontServiceProvider",
+                "Fleetbase\\Storefront\\Providers\\EventServiceProvider"
             ]
         },
         "fleetbase": {

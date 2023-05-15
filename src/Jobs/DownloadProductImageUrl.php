@@ -4,7 +4,7 @@ namespace Fleetbase\Storefront\Jobs;
 
 use Fleetbase\Storefront\Models\Product;
 use Fleetbase\Models\File;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

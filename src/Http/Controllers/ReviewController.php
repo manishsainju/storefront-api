@@ -2,7 +2,6 @@
 
 namespace Fleetbase\Storefront\Http\Controllers;
 
-
 class ReviewController extends StorefrontController
 {
     /**

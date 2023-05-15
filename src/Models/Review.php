@@ -3,7 +3,7 @@
 namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Models\File;
-use Fleetbase\Models\Contact;
+use Fleetbase\FleetOps\Models\Contact;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;

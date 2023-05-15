@@ -6,7 +6,7 @@ use Exception;
 use Fleetbase\FleetOps\Models\Order;
 use Fleetbase\Models\Storefront\NotificationChannel;
 use Fleetbase\Storefront\Support\Storefront;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Bus\Queueable;
 // use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

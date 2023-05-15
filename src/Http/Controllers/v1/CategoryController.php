@@ -3,12 +3,12 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Category as StorefrontCategory;
-use Fleetbase\Http\Resources\Storefront\Product as ProductResource;
+use Fleetbase\Storefront\Http\Resources\Category as StorefrontCategory;
+use Fleetbase\Storefront\Http\Resources\Product as ProductResource;
 use Fleetbase\Models\Category;
 use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\Product;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 // use Fleetbase\Support\Resp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +26,7 @@ class CategoryController extends Controller
         $results = [];
 
         if (session('storefront_store')) {
-            $results = Category::queryFromRequest($request, function (&$query) use ($request) {
+            $results = Category::queryWithRequest($request, function (&$query) use ($request) {
                 $query->select([DB::raw('public_id as id'), 'public_id', 'uuid', 'parent_uuid', 'icon_file_uuid', 'name', 'description', 'tags', 'translations', 'icon', 'slug', 'created_at'])->where(['owner_uuid' => session('storefront_store'), 'for' => 'storefront_product']);
 
                 // only parent categories
@@ -70,7 +70,7 @@ class CategoryController extends Controller
                 })->first();
 
                 if ($store) {
-                    $results = Category::queryFromRequest($request, function (&$query) use ($store, $request) {
+                    $results = Category::queryWithRequest($request, function (&$query) use ($store, $request) {
                         $query->select([DB::raw('public_id as id'), 'public_id', 'uuid', 'parent_uuid', 'icon_file_uuid', 'name', 'icon', 'description', 'tags', 'translations', 'slug', 'created_at'])->where(['owner_uuid' => $store->uuid, 'for' => 'storefront_product']);
 
                         // only parent categories
@@ -105,7 +105,7 @@ class CategoryController extends Controller
                     }
                 }
             } else {
-                $results = Category::queryFromRequest($request, function (&$query) use ($request) {
+                $results = Category::queryWithRequest($request, function (&$query) use ($request) {
                     $query->select([DB::raw('public_id as id'), 'public_id', 'uuid', 'parent_uuid', 'name', 'icon', 'description', 'tags', 'translations', 'slug', 'created_at'])->where(['owner_uuid' => session('storefront_network'), 'for' => 'storefront_network']);
 
                     // only parent categories

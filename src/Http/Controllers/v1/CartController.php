@@ -4,10 +4,8 @@ namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
 use Fleetbase\Storefront\Models\Cart;
-use Fleetbase\Support\Resp;
+use Fleetbase\Storefront\Http\Resources\Cart as StorefrontCart;
 use Illuminate\Http\Request;
-use Fleetbase\Http\Resources\Storefront\Cart as StorefrontCart;
-use Exception;
 
 class CartController extends Controller
 {
@@ -52,7 +50,7 @@ class CartController extends Controller
 
         try {
             $cart->add($productId, $quantity, $variants, $addons, $storeLocationId, $scheduledAt);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 
@@ -84,7 +82,7 @@ class CartController extends Controller
 
         try {
             $cart->updateItem($cartItemId, $quantity, $variants, $addons, $scheduledAt);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 
@@ -112,7 +110,7 @@ class CartController extends Controller
 
         try {
             $cart->remove($cartItemId);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->error($e->getMessage());
         }
 

@@ -3,15 +3,14 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\CreateReviewRequest;
-use Fleetbase\Http\Resources\Storefront\Review as StorefrontReview;
-use Fleetbase\Http\Resources\v1\DeletedResource;
-use Fleetbase\Models\File;
+use Fleetbase\Storefront\Http\Requests\CreateReviewRequest;
+use Fleetbase\Storefront\Http\Resources\Review as StorefrontReview;
+use Fleetbase\FleetOps\Http\Resources\v1\DeletedResource;
 use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\Review;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
-use Fleetbase\Support\Utils;
+use Fleetbase\Storefront\Support\Storefront;
+use Fleetbase\FleetOps\Support\Utils;
+use Fleetbase\Models\File;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +30,7 @@ class ReviewController extends Controller
         $sort = $request->input('sort');
 
         if (session('storefront_store')) {
-            $results = Review::queryFromRequest($request, function (&$query) use ($limit, $offset, $sort) {
+            $results = Review::queryWithRequest($request, function (&$query) use ($limit, $offset, $sort) {
                 $query->where('subject_uuid', session('storefront_store'));
 
                 if ($limit) {
@@ -81,7 +80,7 @@ class ReviewController extends Controller
                     return response()->json(['error' => 'Cannot find reviews for store'], 400);
                 }
 
-                $results = Review::queryFromRequest($request, function (&$query) use ($store, $sort, $limit, $offset) {
+                $results = Review::queryWithRequest($request, function (&$query) use ($store, $sort, $limit, $offset) {
                     $query->where('subject_uuid', $store->uuid);
 
                     if ($limit) {
@@ -183,7 +182,7 @@ class ReviewController extends Controller
     /**
      * Create a review.
      *
-     * @param  \Fleetbase\Http\Requests\Storefront\CreateReviewRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\CreateReviewRequest  $request
      * @return \Fleetbase\Http\Response
      */
     public function create(CreateReviewRequest $request)

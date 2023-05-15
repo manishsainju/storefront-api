@@ -5,7 +5,7 @@ namespace Fleetbase\Storefront\Mail;
 use Fleetbase\Storefront\Models\Network;
 use Fleetbase\Models\Invite;
 use Fleetbase\Models\User;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;

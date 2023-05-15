@@ -3,12 +3,10 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Product as StorefrontProduct;
+use Fleetbase\Storefront\Http\Resources\Product as StorefrontProduct;
 use Fleetbase\Http\Resources\v1\DeletedResource;
 use Fleetbase\Models\Category;
 use Fleetbase\Storefront\Models\Product;
-use Fleetbase\Support\Resp;
-// use Fleetbase\Support\Utils;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -22,7 +20,7 @@ class ProductController extends Controller
      */
     public function query(Request $request)
     {
-        $results = Product::queryFromRequest($request, function (&$query, $request) {
+        $results = Product::queryWithRequest($request, function (&$query, $request) {
             // for stores
             if (session('storefront_store')) {
                 $query->where(['store_uuid' => session('storefront_store')]);

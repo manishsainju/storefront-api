@@ -3,33 +3,31 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\CaptureOrderRequest;
-use Fleetbase\Http\Requests\Storefront\InitializeCheckoutRequest;
-use Fleetbase\Http\Resources\v1\Order as OrderResource;
-use Fleetbase\Models\Contact;
-use Fleetbase\Models\Entity;
-use Fleetbase\Models\Order;
-use Fleetbase\Models\Payload;
-use Fleetbase\Models\Place;
-use Fleetbase\Models\ServiceQuote;
+use Fleetbase\Storefront\Http\Requests\CaptureOrderRequest;
+use Fleetbase\Storefront\Http\Requests\InitializeCheckoutRequest;
+use Fleetbase\Storefront\Notifications\StorefrontOrderPreparing;
 use Fleetbase\Storefront\Models\Cart;
 use Fleetbase\Storefront\Models\Checkout;
 use Fleetbase\Storefront\Models\Gateway;
 use Fleetbase\Storefront\Models\Product;
 use Fleetbase\Storefront\Models\StoreLocation;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Support\QPay;
+use Fleetbase\Storefront\Support\Storefront;
+use Fleetbase\FleetOps\Http\Resources\v1\Order as OrderResource;
+use Fleetbase\FleetOps\Models\Contact;
+use Fleetbase\FleetOps\Models\Entity;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\FleetOps\Models\Payload;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\FleetOps\Models\ServiceQuote;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Models\Transaction;
 use Fleetbase\Models\TransactionItem;
-use Fleetbase\Notifications\StorefrontOrderPreparing;
-use Fleetbase\Support\QPay;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
-use Fleetbase\Support\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Stripe\Exception\InvalidRequestException;
-use Exception;
-use Fleetbase\Storefront\Models\Store;
 
 class CheckoutController extends Controller
 {
@@ -326,7 +324,7 @@ class CheckoutController extends Controller
             // create order with integrated vendor, then resume fleetbase order creation
             try {
                 $integratedVendorOrder = $serviceQuote->integratedVendor->api()->createOrderFromServiceQuote($serviceQuote, $request);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return response()->error($e->getMessage());
             }
         }
@@ -596,7 +594,7 @@ class CheckoutController extends Controller
             // create order with integrated vendor, then resume fleetbase order creation
             try {
                 $integratedVendorOrder = $serviceQuote->integratedVendor->api()->createOrderFromServiceQuote($serviceQuote, $request);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return response()->error($e->getMessage());
             }
         }

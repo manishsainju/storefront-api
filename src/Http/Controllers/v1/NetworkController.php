@@ -3,17 +3,14 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Store as StorefrontStore;
-use Fleetbase\Http\Resources\Storefront\StoreLocation as StorefrontStoreLocation;
-use Fleetbase\Models\Category;
+use Fleetbase\Storefront\Http\Resources\Store as StorefrontStore;
+use Fleetbase\Storefront\Http\Resources\StoreLocation as StorefrontStoreLocation;
 use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\StoreLocation;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Utils;
+use Fleetbase\Models\Category;
+use Fleetbase\FleetOps\Support\Utils;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-// use Fleetbase\Support\Storefront;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\DB;
 
 class NetworkController extends Controller
 {

@@ -2,7 +2,6 @@
 
 namespace Fleetbase\Storefront\Http\Controllers;
 
-
 class ProductHourController extends StorefrontController
 {
     /**

@@ -10,7 +10,7 @@ use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 use Fleetbase\FleetOps\Models\Order;
 use Fleetbase\Storefront\Support\Storefront;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 
 class StorefrontOrderCreated extends Notification
 {

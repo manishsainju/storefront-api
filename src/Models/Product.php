@@ -6,7 +6,7 @@ use Fleetbase\Casts\Json;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\File;
 use Fleetbase\Models\User;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Traits\HasMetaAttributes;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;

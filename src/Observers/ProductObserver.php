@@ -3,7 +3,7 @@
 namespace Fleetbase\Storefront\Observers;
 
 use Fleetbase\Models\File;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Storefront\Models\Product;
 use Fleetbase\Storefront\Models\ProductAddonCategory;
 use Fleetbase\Storefront\Models\ProductVariant;

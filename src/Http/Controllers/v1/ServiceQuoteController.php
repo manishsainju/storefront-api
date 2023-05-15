@@ -3,24 +3,21 @@
 namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\GetServiceQuoteFromCart;
-use Fleetbase\Http\Resources\v1\ServiceQuote as ServiceQuoteResource;
-use Fleetbase\Models\Entity;
-use Fleetbase\Models\Place;
-use Fleetbase\Models\ServiceQuote;
-use Fleetbase\Models\ServiceQuoteItem;
-use Fleetbase\Models\ServiceRate;
-use Fleetbase\Models\IntegratedVendor;
+use Fleetbase\Storefront\Http\Requests\GetServiceQuoteFromCart;
+use Fleetbase\FleetOps\Http\Resources\v1\ServiceQuote as ServiceQuoteResource;
+use Fleetbase\FleetOps\Models\Entity;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\FleetOps\Models\ServiceQuote;
+use Fleetbase\FleetOps\Models\ServiceQuoteItem;
+use Fleetbase\FleetOps\Models\ServiceRate;
+use Fleetbase\FleetOps\Models\IntegratedVendor;
+use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\Cart;
 use Fleetbase\Storefront\Models\Product;
-// use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\StoreLocation;
-use Fleetbase\Support\Api;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Flow;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Support\Str;
-use Exception;
-use Fleetbase\Storefront\Models\Store;
 
 class ServiceQuoteController extends Controller
 {
@@ -73,7 +70,7 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([$origin, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return response()->error($e->getMessage());
                 }
             }
@@ -101,7 +98,7 @@ class ServiceQuoteController extends Controller
         $serviceQuotes = collect();
 
         // get order configurations for ecommerce / task
-        $orderConfigs = Api::queryOrderConfigurations(function (&$query) use ($config) {
+        $orderConfigs = Flow::queryOrderConfigurations(function (&$query) use ($config) {
             $query->where('key', $config);
         });
 
@@ -117,7 +114,7 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([$origin, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return response()->error($e->getMessage());
                 }
 
@@ -259,7 +256,7 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([...$origins, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return response()->error($e->getMessage());
                 }
             }
@@ -288,7 +285,7 @@ class ServiceQuoteController extends Controller
         $serviceQuotes = collect();
 
         // get order configurations for ecommerce / task
-        $orderConfigs = Api::queryOrderConfigurations(function (&$query) use ($config) {
+        $orderConfigs = Flow::queryOrderConfigurations(function (&$query) use ($config) {
             $query->where('key', $config);
         });
 
@@ -302,9 +299,9 @@ class ServiceQuoteController extends Controller
 
             if ($integratedVendor) {
                 try {
-                    /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
+                    /** @var \Fleetbase\FleetOps\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([...$origins, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return response()->error($e->getMessage());
                 }
 

@@ -9,7 +9,7 @@ use Fleetbase\Storefront\Models\Network;
 use Fleetbase\Storefront\Models\NetworkStore;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\Invite;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -50,7 +50,7 @@ class NetworkController extends StorefrontController
      * Add stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function sendInvites(string $id, NetworkActionRequest $request)
@@ -83,7 +83,7 @@ class NetworkController extends StorefrontController
      * Add stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function addStores(string $id, NetworkActionRequest $request)
@@ -112,7 +112,7 @@ class NetworkController extends StorefrontController
      * Remove stores from a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function removeStores(string $id, NetworkActionRequest $request)
@@ -131,7 +131,7 @@ class NetworkController extends StorefrontController
      * Remove stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\AddStoreToNetworkCategory  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\AddStoreToNetworkCategory  $request
      * @return \Illuminate\Http\Response
      */
     public function addStoreToCategory(string $id, AddStoreToNetworkCategory $request)
@@ -152,7 +152,7 @@ class NetworkController extends StorefrontController
      * Remove stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function deleteCategory(string $id, NetworkActionRequest $request)

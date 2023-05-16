@@ -5,11 +5,9 @@ namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 use Fleetbase\Http\Controllers\Controller;
 use Fleetbase\Storefront\Http\Resources\Category as StorefrontCategory;
 use Fleetbase\Storefront\Http\Resources\Product as ProductResource;
-use Fleetbase\Models\Category;
 use Fleetbase\Storefront\Models\Store;
 use Fleetbase\Storefront\Models\Product;
-use Fleetbase\FleetOps\Support\Utils;
-// use Fleetbase\Support\Resp;
+use Fleetbase\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

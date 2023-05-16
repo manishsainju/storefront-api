@@ -1,10 +1,14 @@
 {
     "name": "fleetbase/storefront-api",
     "version": "1.0.0-dev",
-    "description": "FleetOps TMS and Last-Mile Operations System",
-    "keywords": ["fleetops", "last-mile", "tms", "delivery management"],
+    "description": "Headless Commerce API for Storefront Fleetbase Extension.",
+    "keywords": ["storefront", "headless commerce", "marketplace", "e-commerce"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "Fleetbase Pte Ltd.",
+            "email": "hello@fleetbase.io"
+        },
         {
             "name": "Ronald A. Richardson",
             "email": "ron@fleetbase.io"

@@ -1,6 +1,5 @@
 <?php
 
-use Fleetbase\Support\InternalConfig;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix(InternalConfig::get('api.routing.prefix', 'storefront'))->namespace('Fleetbase\Http\Controllers')->group(
+Route::prefix(config('storefront.api.routing.prefix', 'storefront'))->namespace('Fleetbase\Storefront\Http\Controllers')->group(
     function ($router) {
         /*
         |--------------------------------------------------------------------------
@@ -23,18 +22,61 @@ Route::prefix(InternalConfig::get('api.routing.prefix', 'storefront'))->namespac
         |
         | Primary internal routes for console.
         */
-        $router->prefix(InternalConfig::get('api.routing.internal_prefix', 'int'))->namespace('Internal')->group(
+        $router->prefix(config('storefront.api.routing.internal_prefix', 'int'))->group(
             function ($router) {
+                $router->group(['prefix' => 'int/v1', 'middleware' => ['internal.cors']], function () use ($router) {
+                    $router->get('networks/find/{id}', 'NetworkController@findNetwork');
+                });
+
                 $router->group(
-                    ['prefix' => 'v1', 'namespace' => 'v1', 'middleware' => ['fleetbase.protected']],
+                    ['prefix' => 'v1', 'middleware' => ['fleetbase.protected']],
                     function ($router) {
-                        $router->fleetbaseRoutes('contacts');
-                        $router->fleetbaseRoutes(
-                            'drivers',
-                            function ($router, $controller) {
-                                $router->get('statuses', $controller('statuses'));
+                        $router->get('/', 'ActionController@welcome');
+                        $router->group(
+                            ['prefix' => 'actions'],
+                            function ($router) {
+                                $router->get('store-count', 'ActionController@getStoreCount');
+                                $router->get('metrics', 'ActionController@getMetrics');
                             }
                         );
+                        $router->fleetbaseRoutes(
+                            'orders',
+                            function ($router, $controller) {
+                                $router->post('accept', $controller('acceptOrder'));
+                                $router->post('ready', $controller('markOrderAsReady'));
+                                $router->post('completed', $controller('markOrderAsCompleted'));
+                            }
+                        );
+                        $router->fleetbaseRoutes(
+                            'networks',
+                            function ($router, $controller) {
+                                $router->delete('{id}/remove-category', $controller('deleteCategory'));
+                                $router->post('{id}/set-store-category', $controller('ddStoreToCategory'));
+                                $router->post('{id}/add-stores', $controller('addStores'));
+                                $router->post('{id}/remove-stores', $controller('removeStores'));
+                                $router->post('{id}/invite', $controller('sendInvites'));
+                            }
+                        );
+                        $router->fleetbaseRoutes('customers');
+                        $router->fleetbaseRoutes('stores');
+                        $router->fleetbaseRoutes('store-hours');
+                        $router->fleetbaseRoutes('store-locations');
+                        $router->fleetbaseRoutes(
+                            'products',
+                            function ($router, $controller) {
+                                $router->post('process-imports', $controller('processImports'));
+                            }
+                        );
+                        $router->fleetbaseRoutes('product-hours');
+                        $router->fleetbaseRoutes('product-variants');
+                        $router->fleetbaseRoutes('product-variant-options');
+                        $router->fleetbaseRoutes('product-addons');
+                        $router->fleetbaseRoutes('product-addon-categories');
+                        $router->fleetbaseRoutes('addon-categories');
+                        $router->fleetbaseRoutes('gateways');
+                        $router->fleetbaseRoutes('notification-channels');
+                        $router->fleetbaseRoutes('reviews');
+                        $router->fleetbaseRoutes('votes');
                     }
                 );
             }

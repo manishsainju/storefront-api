@@ -1,8 +1,9 @@
 <?php
 
-namespace Fleetbase\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class Store extends FleetbaseResource
 {
@@ -15,7 +16,10 @@ class Store extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => $this->public_id,
+            'id' => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
+            'key' => $this->when(Http::isInternalRequest(), $this->key),
             'name' => $this->name,
             'description' => $this->description,
             'translations' => $this->translations ?? [],
@@ -34,28 +38,21 @@ class Store extends FleetbaseResource
             'online' => $this->online,
             'is_network' => false,
             'is_store' => true,
-            'media' => $this->mapMedia($this->media),
-            'locations' => $this->locations->mapInto(StoreLocation::class),
+            'locations' => $this->when($request->boolean('with_locations'), $this->locations->mapInto(StoreLocation::class)),
+            'media' => $this->when($request->boolean('with_media'), Media::collection($this->media)),
             'slug' => $this->slug,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 
-    public function mapMedia($medias = [])
-    {
-        return collect($medias)->map(function ($media) {
-            return [
-                'id' => $media->public_id,
-                'filename' => $media->original_filename,
-                'type' => $media->content_type,
-                'caption' => $media->caption,
-                'url' => $media->s3url
-            ];
-        });
-    }
-
-    public function formatOptions($options = [])
+    /**
+     * Format the given options array by removing excluded keys.
+     *
+     * @param mixed $options The options array to format.
+     * @return array The formatted options array.
+     */
+    public function formatOptions($options = []): array
     {
         if (!is_array($options)) {
             return [];

@@ -1,14 +1,28 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Models\Order;
-use Fleetbase\Notifications\StorefrontOrderPreparing;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\FleetOps\Http\Controllers\Internal\v1\OrderController as FleetbaseOrderController;
+use Fleetbase\Storefront\Notifications\StorefrontOrderPreparing;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class OrderController extends FleetbaseOrderController
 {
+    /**
+     * The resource to query
+     *
+     * @var string
+     */
+    public $resource = 'order';
+
+    /**
+     * The filter to use
+     *
+     * @var \Fleetbase\Http\Filter\Filter
+     */
+    public $filter = \Fleetbase\Storefront\Http\Filter\OrderFilter::class;
+
     /**
      * Accept an order by incrementing status to preparing.
      *
@@ -136,16 +150,5 @@ class OrderController extends Controller
             'order' => $order->public_id,
             'status' => $order->status
         ]);
-    }
-
-    /**
-     * Base CORS options
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function options()
-    {
-        return response()
-            ->json('OPTIONS');
     }
 }

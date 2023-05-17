@@ -1,59 +1,26 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
-use Fleetbase\Http\Requests\Storefront\AddStoreToNetworkCategory;
-use Fleetbase\Http\Requests\Storefront\NetworkActionRequest;
-use Fleetbase\Mail\StorefrontNetworkInvite as MailStorefrontNetworkInvite;
+use Fleetbase\Storefront\Http\Requests\AddStoreToNetworkCategory;
+use Fleetbase\Storefront\Http\Requests\NetworkActionRequest;
+use Fleetbase\Storefront\Mail\StorefrontNetworkInvite;
+use Fleetbase\Storefront\Models\Network;
+use Fleetbase\Storefront\Models\NetworkStore;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\Invite;
-use Fleetbase\Models\Storefront\Network;
-use Fleetbase\Models\Storefront\NetworkStore;
-use Fleetbase\Notifications\StorefrontNetworkInvite;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Utils;
-use Illuminate\Http\Request;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
-class NetworkController extends RESTController
+class NetworkController extends StorefrontController
 {
     /**
      * The resource to query
      *
      * @var string
      */
-    public string $resource = 'networks';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
-
-    /**
-     * Updates a record with request payload
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function updateRecord(Request $request)
-    {
-        return $this->model::updateRecordFromRequest($request, function (&$request, Network &$network, &$input) {
-            $network->flushAttributesCache();
-            $alertable = $request->input('network.alertable', []);
-
-            // set alertables to public_id
-            $input['alertable'] = collect($alertable)->mapWithKeys(function ($alertables, $key) {
-                return [$key => collect($alertables)->map(function ($user) {
-                    return $user['public_id'];
-                })->values()->toArray()];
-            })->toArray();
-        });
-    }
+    public $resource = 'networks';
 
     /**
      * Find network by public_id or invitation code.
@@ -83,7 +50,7 @@ class NetworkController extends RESTController
      * Add stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function sendInvites(string $id, NetworkActionRequest $request)
@@ -107,7 +74,7 @@ class NetworkController extends RESTController
         $invitation->setRelation('createdBy', $request->user());
 
         // send invite
-        Mail::send(new MailStorefrontNetworkInvite($invitation));
+        Mail::send(new StorefrontNetworkInvite($invitation));
 
         return response()->json(['status' => 'ok']);
     }
@@ -116,7 +83,7 @@ class NetworkController extends RESTController
      * Add stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function addStores(string $id, NetworkActionRequest $request)
@@ -145,7 +112,7 @@ class NetworkController extends RESTController
      * Remove stores from a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function removeStores(string $id, NetworkActionRequest $request)
@@ -164,7 +131,7 @@ class NetworkController extends RESTController
      * Remove stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\AddStoreToNetworkCategory  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\AddStoreToNetworkCategory  $request
      * @return \Illuminate\Http\Response
      */
     public function addStoreToCategory(string $id, AddStoreToNetworkCategory $request)
@@ -185,7 +152,7 @@ class NetworkController extends RESTController
      * Remove stores to a network.
      *
      * @param string $id 
-     * @param  \Fleetbase\Http\Requests\Storefront\NetworkActionRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\NetworkActionRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function deleteCategory(string $id, NetworkActionRequest $request)

@@ -1,17 +1,16 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\CreateReviewRequest;
-use Fleetbase\Http\Resources\Storefront\Review as StorefrontReview;
-use Fleetbase\Http\Resources\v1\DeletedResource;
+use Fleetbase\Storefront\Http\Requests\CreateReviewRequest;
+use Fleetbase\Storefront\Http\Resources\Review as StorefrontReview;
+use Fleetbase\FleetOps\Http\Resources\v1\DeletedResource;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Models\Review;
+use Fleetbase\Storefront\Support\Storefront;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Models\File;
-use Fleetbase\Models\Storefront\Store;
-use Fleetbase\Models\Storefront\Review;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
-use Fleetbase\Support\Utils;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +30,7 @@ class ReviewController extends Controller
         $sort = $request->input('sort');
 
         if (session('storefront_store')) {
-            $results = Review::queryFromRequest($request, function (&$query) use ($limit, $offset, $sort) {
+            $results = Review::queryWithRequest($request, function (&$query) use ($limit, $offset, $sort) {
                 $query->where('subject_uuid', session('storefront_store'));
 
                 if ($limit) {
@@ -81,7 +80,7 @@ class ReviewController extends Controller
                     return response()->json(['error' => 'Cannot find reviews for store'], 400);
                 }
 
-                $results = Review::queryFromRequest($request, function (&$query) use ($store, $sort, $limit, $offset) {
+                $results = Review::queryWithRequest($request, function (&$query) use ($store, $sort, $limit, $offset) {
                     $query->where('subject_uuid', $store->uuid);
 
                     if ($limit) {
@@ -173,7 +172,7 @@ class ReviewController extends Controller
         try {
             $review = Review::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Review resource not found.');
+            return response()->error('Review resource not found.');
         }
 
         // response the review resource
@@ -183,7 +182,7 @@ class ReviewController extends Controller
     /**
      * Create a review.
      *
-     * @param  \Fleetbase\Http\Requests\Storefront\CreateReviewRequest  $request
+     * @param  \Fleetbase\Storefront\Http\Requests\CreateReviewRequest  $request
      * @return \Fleetbase\Http\Response
      */
     public function create(CreateReviewRequest $request)
@@ -192,13 +191,13 @@ class ReviewController extends Controller
         $about = Storefront::about();
 
         if (!$customer) {
-            return Resp::error('Not authorized to create reviews');
+            return response()->error('Not authorized to create reviews');
         }
 
         $subject = Utils::resolveSubject($request->input('subject'));
 
         if (!$subject) {
-            return Resp::error('Invalid subject for review');
+            return response()->error('Invalid subject for review');
         }
 
         $review = Review::create([
@@ -228,8 +227,8 @@ class ReviewController extends Controller
                 $file = File::create([
                     'company_uuid' => session('company'),
                     'uploader_uuid' => $customer->user_uuid,
-                    'key_uuid' => $review->uuid,
-                    'key_type' => Utils::getMutationType($review),
+                    'subject_uuid' => $review->uuid,
+                    'subject_type' => Utils::getMutationType($review),
                     'name' => basename($bucketPath),
                     'original_filename' => basename($bucketPath),
                     'extension' => $extension,
@@ -259,7 +258,7 @@ class ReviewController extends Controller
         try {
             $review = Review::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Review resource not found.');
+            return response()->error('Review resource not found.');
         }
 
         // delete the review

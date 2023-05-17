@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Models\Category;
 
@@ -14,10 +14,17 @@ class AddonCategory extends Category
     protected $with = ['addons'];
 
     /**
+     * The key to use in the payload responses
+     *
+     * @var string
+     */
+    protected string $payloadKey = 'addon_category';
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function addons()
     {
-        return $this->setConnection(config('storefront.api.db'))->hasMany(ProductAddon::class, 'category_uuid');
+        return $this->setConnection(config('storefront.connection.db'))->hasMany(ProductAddon::class, 'category_uuid');
     }
 }

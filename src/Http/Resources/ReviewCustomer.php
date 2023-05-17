@@ -1,8 +1,9 @@
 <?php
 
-namespace Fleetbase\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 use Illuminate\Support\Str;
 
 class ReviewCustomer extends FleetbaseResource
@@ -16,7 +17,9 @@ class ReviewCustomer extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => Str::replaceFirst('contact', 'customer', $this->public_id),
+            'id' => $this->when(Http::isInternalRequest(), $this->id, Str::replaceFirst('contact', 'customer', $this->public_id)),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,

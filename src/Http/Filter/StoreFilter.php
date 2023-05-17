@@ -1,39 +1,33 @@
 <?php
 
-namespace Fleetbase\Http\Filters\Storefront;
+namespace Fleetbase\Storefront\Http\Filter;
 
-class StoreFilter
+use Fleetbase\Http\Filter\Filter;
+
+class StoreFilter extends Filter
 {
-    /**
-     * Apply the filters to a given Eloquent query builder and request.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Http\Request     $request
-     * @param  \Fleetbase\Models\Driver  $model
-     * @return void
-     */
-    public static function apply($query, $request, $model)
+    public function queryForInternal()
     {
-        // Query only this company sessions resources
-        $query->where('company_uuid', session('company'));
+        $this->builder->where('company_uuid', $this->session->get('company'));
+    }
 
-        // Query by network
-        if ($request->filled('network')) {
-            $query->whereHas('networks', function ($q) use ($request) {
-                $q->where('network_uuid', $request->input('network'));
+    public function network(?string $network)
+    {
+        $this->builder->whereHas(
+            'networks',
+            function ($query) use ($network) {
+                $query->where('network_uuid', $network);
 
                 // Query stores without a category
-                if ($request->filled('without_category')) {
-                    $q->whereNull('category_uuid');
+                if ($this->request->filled('without_category')) {
+                    $query->whereNull('category_uuid');
                 }
 
                 // Query stores by category
-                if ($request->filled('category')) {
-                    $q->where('category_uuid', $request->input('category'));
+                if ($this->request->filled('category')) {
+                    $query->where('category_uuid', $this->request->input('category'));
                 }
-            });
-        }
-
-        return $query;
+            }
+        );
     }
 }

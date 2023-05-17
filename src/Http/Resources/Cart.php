@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
 

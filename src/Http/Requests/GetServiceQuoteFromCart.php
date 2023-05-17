@@ -1,8 +1,8 @@
 <?php
 
-namespace Fleetbase\Http\Requests\Storefront;
+namespace Fleetbase\Storefront\Http\Requests;
 
-use Fleetbase\Http\Requests\Request;
+use Fleetbase\Http\Requests\FleetbaseRequest;
 use Fleetbase\Rules\IsValidLocation;
 use Illuminate\Support\Str;
 

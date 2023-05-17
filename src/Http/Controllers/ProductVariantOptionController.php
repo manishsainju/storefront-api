@@ -1,22 +1,13 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
-
-class ProductVariantOptionController extends RESTController
+class ProductVariantOptionController extends StorefrontController
 {
     /**
      * The resource to query
      *
      * @var string
      */
-    public string $resource = 'product_variant_option';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
+    public $resource = 'product_variant_option';
 }

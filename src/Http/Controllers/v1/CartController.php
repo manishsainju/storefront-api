@@ -1,13 +1,11 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Models\Storefront\Cart;
-use Fleetbase\Support\Resp;
+use Fleetbase\Storefront\Models\Cart;
+use Fleetbase\Storefront\Http\Resources\Cart as StorefrontCart;
 use Illuminate\Http\Request;
-use Fleetbase\Http\Resources\Storefront\Cart as StorefrontCart;
-use Exception;
 
 class CartController extends Controller
 {
@@ -47,13 +45,13 @@ class CartController extends Controller
         $cart = Cart::retrieve($cartId);
 
         if (!$cart) {
-            return Resp::error('Cart was not found or has already been checkout out.');
+            return response()->error('Cart was not found or has already been checkout out.');
         }
 
         try {
             $cart->add($productId, $quantity, $variants, $addons, $storeLocationId, $scheduledAt);
-        } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+        } catch (\Exception $e) {
+            return response()->error($e->getMessage());
         }
 
         // reset currency
@@ -79,13 +77,13 @@ class CartController extends Controller
         $cart = Cart::retrieve($cartId);
 
         if (!$cart) {
-            return Resp::error('Cart was not found or has already been checkout out.');
+            return response()->error('Cart was not found or has already been checkout out.');
         }
 
         try {
             $cart->updateItem($cartItemId, $quantity, $variants, $addons, $scheduledAt);
-        } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+        } catch (\Exception $e) {
+            return response()->error($e->getMessage());
         }
 
         // reset currency
@@ -107,13 +105,13 @@ class CartController extends Controller
         $cart = Cart::retrieve($cartId);
 
         if (!$cart) {
-            return Resp::error('Cart was not found or has already been checkout out.');
+            return response()->error('Cart was not found or has already been checkout out.');
         }
 
         try {
             $cart->remove($cartItemId);
-        } catch (Exception $e) {
-            return Resp::error($e->getMessage());
+        } catch (\Exception $e) {
+            return response()->error($e->getMessage());
         }
 
         // reset currency
@@ -133,7 +131,7 @@ class CartController extends Controller
         $cart = Cart::retrieve($cartId);
 
         if (!$cart) {
-            return Resp::error('Unable to empty cart.');
+            return response()->error('Unable to empty cart.');
         }
 
         $cart->empty();
@@ -153,7 +151,7 @@ class CartController extends Controller
         $cart = Cart::retrieve($cartId);
 
         if (!$cart) {
-            return Resp::error('Cart was not found or has already been checkout out.');
+            return response()->error('Cart was not found or has already been checkout out.');
         }
 
         $cart->delete();

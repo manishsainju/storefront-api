@@ -1,22 +1,13 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
-
-class StoreHourController extends RESTController
+class StoreHourController extends StorefrontController
 {
     /**
      * The resource to query
      *
      * @var string
      */
-    public string $resource = 'store_hours';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
+    public $resource = 'store_hours';
 }

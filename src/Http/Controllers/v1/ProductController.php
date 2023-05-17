@@ -1,14 +1,12 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Product as StorefrontProduct;
+use Fleetbase\Storefront\Http\Resources\Product as StorefrontProduct;
 use Fleetbase\Http\Resources\v1\DeletedResource;
 use Fleetbase\Models\Category;
-use Fleetbase\Models\Storefront\Product;
-use Fleetbase\Support\Resp;
-// use Fleetbase\Support\Utils;
+use Fleetbase\Storefront\Models\Product;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -22,7 +20,7 @@ class ProductController extends Controller
      */
     public function query(Request $request)
     {
-        $results = Product::queryFromRequest($request, function (&$query, $request) {
+        $results = Product::queryWithRequest($request, function (&$query, $request) {
             // for stores
             if (session('storefront_store')) {
                 $query->where(['store_uuid' => session('storefront_store')]);
@@ -65,7 +63,7 @@ class ProductController extends Controller
         try {
             $product = Product::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Product resource not found.');
+            return response()->error('Product resource not found.');
         }
 
         // response the product resource
@@ -84,7 +82,7 @@ class ProductController extends Controller
         try {
             $product = Product::findRecordOrFail($id);
         } catch (ModelNotFoundException $exception) {
-            return Resp::error('Product resource not found.');
+            return response()->error('Product resource not found.');
         }
 
         // delete the product

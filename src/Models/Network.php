@@ -1,26 +1,26 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\File;
 use Fleetbase\Models\Invite;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Traits\HasOptionsAttributes;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
+use Fleetbase\Traits\Searchable;
 use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Network extends BaseModel
+class Network extends StorefrontModel
 {
-    use HasUuid, HasPublicid, HasApiModelBehavior, HasOptionsAttributes, HasSlug;
+    use HasUuid, HasPublicid, HasApiModelBehavior, HasOptionsAttributes, HasSlug, Searchable;
 
     /**
      * The type of public Id to generate
@@ -28,13 +28,6 @@ class Network extends BaseModel
      * @var string
      */
     protected $publicIdType = 'network';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -108,7 +101,7 @@ class Network extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -116,7 +109,7 @@ class Network extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -124,7 +117,7 @@ class Network extends BaseModel
      */
     public function logo()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -132,7 +125,7 @@ class Network extends BaseModel
      */
     public function backdrop()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -140,7 +133,7 @@ class Network extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'subject_uuid');
     }
 
     /**
@@ -170,7 +163,7 @@ class Network extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function paymentGateways()
+    public function gateways()
     {
         return $this->hasMany(Gateway::class, 'owner_uuid');
     }
@@ -180,7 +173,7 @@ class Network extends BaseModel
      */
     public function invitations()
     {
-        return $this->setConnection('mysql')->hasMany(Invite::class, 'subject_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Invite::class, 'subject_uuid');
     }
 
     /**
@@ -188,8 +181,8 @@ class Network extends BaseModel
      */
     public function getLogoUrlAttribute()
     {
-        // return static::attributeFromCache($this, 'logo.s3url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png');
-        return $this->logo->s3url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
+        // return static::attributeFromCache($this, 'logo.url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png');
+        return $this->logo->url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
     }
 
     /**
@@ -197,8 +190,8 @@ class Network extends BaseModel
      */
     public function getBackdropUrlAttribute()
     {
-        // return static::attributeFromCache($this, 'backdrop.s3url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png');
-        return $this->backdrop->s3url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png';
+        // return static::attributeFromCache($this, 'backdrop.url', 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png');
+        return $this->backdrop->url ?? 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/default-storefront-backdrop.png';
     }
 
     /**

@@ -1,35 +1,33 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\CaptureOrderRequest;
-use Fleetbase\Http\Requests\Storefront\InitializeCheckoutRequest;
-use Fleetbase\Http\Resources\v1\Order as OrderResource;
-use Fleetbase\Models\Contact;
-use Fleetbase\Models\Entity;
-use Fleetbase\Models\Order;
-use Fleetbase\Models\Payload;
-use Fleetbase\Models\Place;
-use Fleetbase\Models\ServiceQuote;
-use Fleetbase\Models\Storefront\Cart;
-use Fleetbase\Models\Storefront\Checkout;
-use Fleetbase\Models\Storefront\Gateway;
-use Fleetbase\Models\Storefront\Product;
-use Fleetbase\Models\Storefront\StoreLocation;
+use Fleetbase\Storefront\Http\Requests\CaptureOrderRequest;
+use Fleetbase\Storefront\Http\Requests\InitializeCheckoutRequest;
+use Fleetbase\Storefront\Notifications\StorefrontOrderPreparing;
+use Fleetbase\Storefront\Models\Cart;
+use Fleetbase\Storefront\Models\Checkout;
+use Fleetbase\Storefront\Models\Gateway;
+use Fleetbase\Storefront\Models\Product;
+use Fleetbase\Storefront\Models\StoreLocation;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Support\QPay;
+use Fleetbase\Storefront\Support\Storefront;
+use Fleetbase\FleetOps\Http\Resources\v1\Order as OrderResource;
+use Fleetbase\FleetOps\Models\Contact;
+use Fleetbase\FleetOps\Models\Entity;
+use Fleetbase\FleetOps\Models\Order;
+use Fleetbase\FleetOps\Models\Payload;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\FleetOps\Models\ServiceQuote;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Models\Transaction;
 use Fleetbase\Models\TransactionItem;
-use Fleetbase\Notifications\StorefrontOrderPreparing;
-use Fleetbase\Support\QPay;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
-use Fleetbase\Support\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Stripe\Exception\InvalidRequestException;
-use Exception;
-use Fleetbase\Models\Storefront\Store;
 
 class CheckoutController extends Controller
 {
@@ -64,7 +62,7 @@ class CheckoutController extends Controller
         }
 
         if (!$gateway) {
-            return Resp::error('No gateway configured!');
+            return response()->error('No gateway configured!');
         }
 
         // handle checkout initialization based on gateway
@@ -77,7 +75,7 @@ class CheckoutController extends Controller
             return static::initializeQpayCheckout($customer, $gateway, $serviceQuote, $cart, $checkoutOptions);
         }
 
-        return Resp::error('Unable to initialize checkout!');
+        return response()->error('Unable to initialize checkout!');
     }
 
     public static function initializeCashCheckout(Contact $customer, Gateway $gateway, ServiceQuote $serviceQuote, Cart $cart, $checkoutOptions)
@@ -140,7 +138,7 @@ class CheckoutController extends Controller
 
         // check for secret key first
         if (!isset($gateway->config->secret_key)) {
-            return Resp::error('Gateway not configured correctly!');
+            return response()->error('Gateway not configured correctly!');
         }
 
         // Set the stipre secret key from gateway
@@ -170,7 +168,7 @@ class CheckoutController extends Controller
                     ['stripe_version' => '2020-08-27']
                 );
             } else {
-                return Resp::error('Error from Stripe: ' . $errorMessage);
+                return response()->error('Error from Stripe: ' . $errorMessage);
             }
         }
 
@@ -219,7 +217,7 @@ class CheckoutController extends Controller
 
         // check for secret key first
         if (!isset($gateway->config->username)) {
-            return Resp::error('Gateway not configured correctly!');
+            return response()->error('Gateway not configured correctly!');
         }
 
         // Create qpay instance
@@ -315,7 +313,7 @@ class CheckoutController extends Controller
 
         // super rare condition
         if (!$store) {
-            return Resp::error('No storefront in request to capture order!');
+            return response()->error('No storefront in request to capture order!');
         }
 
         // prepare for integrated vendor order if applicable
@@ -326,8 +324,8 @@ class CheckoutController extends Controller
             // create order with integrated vendor, then resume fleetbase order creation
             try {
                 $integratedVendorOrder = $serviceQuote->integratedVendor->api()->createOrderFromServiceQuote($serviceQuote, $request);
-            } catch (Exception $e) {
-                return Resp::error($e->getMessage());
+            } catch (\Exception $e) {
+                return response()->error($e->getMessage());
             }
         }
 
@@ -585,7 +583,7 @@ class CheckoutController extends Controller
         $currency = $checkout->currency ?? ($cart->currency ?? session('storefront_currency'));
 
         if (!$about) {
-            return Resp::error('No network in request to capture order!');
+            return response()->error('No network in request to capture order!');
         }
 
         // prepare for integrated vendor order if applicable
@@ -596,8 +594,8 @@ class CheckoutController extends Controller
             // create order with integrated vendor, then resume fleetbase order creation
             try {
                 $integratedVendorOrder = $serviceQuote->integratedVendor->api()->createOrderFromServiceQuote($serviceQuote, $request);
-            } catch (Exception $e) {
-                return Resp::error($e->getMessage());
+            } catch (\Exception $e) {
+                return response()->error($e->getMessage());
             }
         }
 

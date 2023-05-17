@@ -1,19 +1,16 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Store as StorefrontStore;
-use Fleetbase\Http\Resources\Storefront\StoreLocation as StorefrontStoreLocation;
+use Fleetbase\Storefront\Http\Resources\Store as StorefrontStore;
+use Fleetbase\Storefront\Http\Resources\StoreLocation as StorefrontStoreLocation;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Models\StoreLocation;
 use Fleetbase\Models\Category;
-use Fleetbase\Models\Storefront\Store;
-use Fleetbase\Models\Storefront\StoreLocation;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-// use Fleetbase\Support\Storefront;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\DB;
 
 class NetworkController extends Controller
 {
@@ -26,7 +23,7 @@ class NetworkController extends Controller
     public function stores(Request $request)
     {
         if (session('storefront_store')) {
-            return Resp::error('Stores cannot have stores!');
+            return response()->error('Stores cannot have stores!');
         }
 
         $sort = $request->input('sort', false);

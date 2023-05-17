@@ -1,22 +1,13 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront;
+namespace Fleetbase\Storefront\Http\Controllers;
 
-use Fleetbase\Http\Controllers\RESTController;
-
-class AddonCategoryController extends RESTController
+class AddonCategoryController extends StorefrontController
 {
     /**
      * The resource to query
      *
      * @var string
      */
-    public string $resource = 'addon_category';
-
-    /**
-     * The namespace for the resource
-     *
-     * @var string
-     */
-    public string $namespace = 'Fleetbase\\Models\\Storefront\\';
+    public $resource = 'addon_category';
 }

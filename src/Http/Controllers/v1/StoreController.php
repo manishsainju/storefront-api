@@ -1,19 +1,18 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Resources\Storefront\Gateway as GatewayResource;
-use Fleetbase\Http\Resources\Storefront\Network;
-use Fleetbase\Http\Resources\Storefront\Product as ProductResource;
-use Fleetbase\Http\Resources\Storefront\Store as StorefrontStore;
-use Fleetbase\Http\Resources\Storefront\StoreLocation as StoreLocationResource;
-use Fleetbase\Models\Storefront\Gateway;
-use Fleetbase\Models\Storefront\Product;
-use Fleetbase\Models\Storefront\Store;
-use Fleetbase\Models\Storefront\StoreLocation;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Storefront;
+use Fleetbase\Storefront\Http\Resources\Gateway as GatewayResource;
+use Fleetbase\Storefront\Http\Resources\Network;
+use Fleetbase\Storefront\Http\Resources\Product as ProductResource;
+use Fleetbase\Storefront\Http\Resources\Store as StorefrontStore;
+use Fleetbase\Storefront\Http\Resources\StoreLocation as StoreLocationResource;
+use Fleetbase\Storefront\Models\Gateway;
+use Fleetbase\Storefront\Models\Product;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Models\StoreLocation;
+use Fleetbase\Storefront\Support\Storefront;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -30,7 +29,7 @@ class StoreController extends Controller
         $about = Storefront::about('*');
 
         if (!$about) {
-            return Resp::error('Unable to find store!');
+            return response()->error('Unable to find store!');
         }
 
         if ($about->is_store) {
@@ -49,7 +48,7 @@ class StoreController extends Controller
     public function locations(Request $request)
     {
         if (session('storefront_network') && $request->missing('store')) {
-            return Resp::error('Networks cannot have locations!');
+            return response()->error('Networks cannot have locations!');
         }
 
         if ($request->filled('store')) {
@@ -73,7 +72,7 @@ class StoreController extends Controller
     public function location(string $id, Request $request)
     {
         if (session('storefront_network') && $request->missing('store')) {
-            return Resp::error('Networks cannot have locations!');
+            return response()->error('Networks cannot have locations!');
         }
 
         $storeId = $request->input('store', session('storefront_store'));

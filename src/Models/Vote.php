@@ -1,13 +1,12 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class Vote extends BaseModel
+class Vote extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior;
 
@@ -17,13 +16,6 @@ class Vote extends BaseModel
      * @var string
      */
     protected $publicIdType = 'vote';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -71,7 +63,7 @@ class Vote extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -79,7 +71,7 @@ class Vote extends BaseModel
      */
     public function customer()
     {
-        return $this->setConnection('mysql')->belongsTo(Contact::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Contact::class);
     }
 
     /**

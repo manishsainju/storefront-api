@@ -1,21 +1,13 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 
-class StoreHour extends BaseModel
+class StoreHour extends StorefrontModel
 {
     use HasUuid, HasApiModelBehavior;
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.

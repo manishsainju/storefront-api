@@ -1,22 +1,14 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 
-class NetworkStore extends BaseModel
+class NetworkStore extends StorefrontModel
 {
     use HasUuid, HasApiModelBehavior;
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -74,6 +66,6 @@ class NetworkStore extends BaseModel
      */
     public function category()
     {
-        return $this->setConnection('mysql')->belongsTo(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Category::class);
     }
 }

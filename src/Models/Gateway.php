@@ -1,18 +1,17 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\User;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\File;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
 use Fleetbase\Traits\HasPublicid;
 
-class Gateway extends BaseModel
+class Gateway extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior;
 
@@ -22,13 +21,6 @@ class Gateway extends BaseModel
      * @var string
      */
     protected $publicIdType = 'gateway';
-
-    /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
 
     /**
      * The database table used by the model.
@@ -81,7 +73,7 @@ class Gateway extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -89,7 +81,7 @@ class Gateway extends BaseModel
      */
     public function company()
     {
-        return $this->setConnection('mysql')->belongsTo(Company::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Company::class);
     }
 
     /**
@@ -105,7 +97,7 @@ class Gateway extends BaseModel
      */
     public function logoFile()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -113,7 +105,7 @@ class Gateway extends BaseModel
      */
     public function getLogoUrlAttribute()
     {
-        $default = $this->logoFile->s3url ?? null;
+        $default = $this->logoFile->url ?? null;
         $backup = 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
 
         return $default ?? $backup;
@@ -157,16 +149,17 @@ class Gateway extends BaseModel
      *
      * @return Gateway
      */
-    public static function cash($sandbox = 0): Gateway
+    public static function cash($attributes = ['sandbox' => 0]): Gateway
     {
         return new static([
             'public_id' => 'gateway_cash',
             'name' => 'Cash',
             'code' => 'cash',
             'type' => 'cash',
-            'sandbox' => $sandbox,
+            'sandbox' => $attributes['sandbox'],
             'return_url' => null,
-            'callback_url' => null
+            'callback_url' => null,
+            ...$attributes
         ]);
     }
 }

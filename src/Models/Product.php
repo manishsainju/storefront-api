@@ -1,13 +1,12 @@
 <?php
 
-namespace Fleetbase\Models\Storefront;
+namespace Fleetbase\Storefront\Models;
 
 use Fleetbase\Casts\Json;
-use Fleetbase\Models\BaseModel;
 use Fleetbase\Models\Category;
 use Fleetbase\Models\File;
 use Fleetbase\Models\User;
-use Fleetbase\Support\Utils;
+use Fleetbase\FleetOps\Support\Utils;
 use Fleetbase\Traits\HasMetaAttributes;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
@@ -17,7 +16,6 @@ use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Milon\Barcode\Facades\DNS2DFacade as DNS2D;
-// use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class ProductStatus
 {
@@ -25,7 +23,7 @@ class ProductStatus
     public const DRAFT = 'draft';
 }
 
-class Product extends BaseModel
+class Product extends StorefrontModel
 {
     use HasUuid, HasPublicid, HasApiModelBehavior, HasMetaAttributes, HasSlug, Searchable;
 
@@ -37,32 +35,11 @@ class Product extends BaseModel
     protected $publicIdType = 'product';
 
     /**
-     * The database connection to use.
-     *
-     * @var string
-     */
-    protected $connection = 'storefront';
-
-    /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'products';
-
-    /**
-     * The cache prefix.
-     *
-     * @var string
-     */
-    protected $cachePrefix = 'storefront-products';
-
-    /**
-     * The cache cool down period.
-     *
-     * @var string
-     */
-    protected $cacheCooldownSeconds = 600; // 10 minutes
 
     /**
      * These attributes that can be queried
@@ -165,7 +142,7 @@ class Product extends BaseModel
      */
     public function createdBy()
     {
-        return $this->setConnection('mysql')->belongsTo(User::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(User::class);
     }
 
     /**
@@ -173,7 +150,7 @@ class Product extends BaseModel
      */
     public function category()
     {
-        return $this->setConnection('mysql')->belongsTo(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(Category::class);
     }
 
     /**
@@ -181,7 +158,7 @@ class Product extends BaseModel
      */
     public function addonCategories()
     {
-        return $this->setConnection('mysql')->hasMany(ProductAddonCategory::class);
+        return $this->hasMany(ProductAddonCategory::class);
     }
 
     /**
@@ -189,7 +166,7 @@ class Product extends BaseModel
      */
     public function variants()
     {
-        return $this->setConnection('mysql')->hasMany(ProductVariant::class);
+        return $this->hasMany(ProductVariant::class);
     }
 
     /**
@@ -197,7 +174,7 @@ class Product extends BaseModel
      */
     public function primaryImage()
     {
-        return $this->setConnection('mysql')->belongsTo(File::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->belongsTo(File::class);
     }
 
     /**
@@ -205,7 +182,7 @@ class Product extends BaseModel
      */
     public function files()
     {
-        return $this->setConnection('mysql')->hasMany(File::class, 'key_uuid');
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(File::class, 'subject_uuid');
     }
 
     /**
@@ -267,8 +244,8 @@ class Product extends BaseModel
      */
     public function getPrimaryImageUrlAttribute()
     {
-        $default = $this->primaryImage->s3url ?? null; //static::attributeFromCache($this, 'primaryImage.s3url', null);
-        $secondary = $this->files->first()->s3url ?? null;
+        $default = $this->primaryImage->url ?? null;
+        $secondary = $this->files->first()->url ?? null;
         $backup = 'https://flb-assets.s3.ap-southeast-1.amazonaws.com/static/image-file-icon.png';
 
         return $default ?? $secondary ?? $backup;
@@ -304,9 +281,19 @@ class Product extends BaseModel
         $this->attributes['sale_price'] = Utils::numbersOnly($value);
     }
 
-    public static function findFromNetwork($search, $store = null, $limit = 20, $network = null)
+    /**
+     * Finds products that match the specified search query, store, and network.
+     *
+     * @param string $search The search query to use to find products.
+     * @param string|null $store The store to search for products in. If null, all stores are searched.
+     * @param int $limit The maximum number of products to return.
+     * @param string|null $network The network to search for products on. If null, the session network is used.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection The collection of products that match the search query, store, and network.
+     */
+    public static function findFromNetwork($search, $store = null, $limit = 20, $network = null): ?\Illuminate\Database\Eloquent\Collection
     {
-        $network = $network ?? session('storefront_network');
+        $network = session('storefront_network', $network);
 
         $results = static::whereHas('store', function ($query) use ($network, $store) {
             if ($store) {

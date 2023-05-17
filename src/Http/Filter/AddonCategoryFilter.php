@@ -1,25 +1,19 @@
 <?php
 
-namespace Fleetbase\Http\Filters\Storefront;
+namespace Fleetbase\Storefront\Http\Filter;
 
-class AddonCategoryFilter
+use Fleetbase\Http\Filter\Filter;
+
+class AddonCategoryFilter extends Filter
 {
-    /**
-     * Apply the filters to a given Eloquent query builder and request.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Http\Request     $request
-     * @param  \Fleetbase\Models\Storefront\AddonCategory  $model
-     * @return void
-     */
-    public static function apply($query, $request, $model)
+    public function queryForInternal()
     {
         // Query only this company sessions resources
-        $query->where([
-            'company_uuid' => session('company'),
-            'for' => 'storefront_product_addon'
-        ]);
-
-        return $query;
+        $this->builder->where(
+            [
+                'company_uuid' => $this->session->get('company'),
+                'for' => 'storefront_product_addon'
+            ]
+        );
     }
 }

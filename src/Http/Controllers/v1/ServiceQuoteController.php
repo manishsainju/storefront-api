@@ -1,26 +1,23 @@
 <?php
 
-namespace Fleetbase\Http\Controllers\Storefront\v1;
+namespace Fleetbase\Storefront\Http\Controllers\Storefront\v1;
 
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\Storefront\GetServiceQuoteFromCart;
-use Fleetbase\Http\Resources\v1\ServiceQuote as ServiceQuoteResource;
-use Fleetbase\Models\Entity;
-use Fleetbase\Models\Place;
-use Fleetbase\Models\ServiceQuote;
-use Fleetbase\Models\ServiceQuoteItem;
-use Fleetbase\Models\ServiceRate;
-use Fleetbase\Models\IntegratedVendor;
-use Fleetbase\Models\Storefront\Cart;
-use Fleetbase\Models\Storefront\Product;
-// use Fleetbase\Models\Storefront\Store;
-use Fleetbase\Models\Storefront\StoreLocation;
-use Fleetbase\Support\Api;
-use Fleetbase\Support\Resp;
-use Fleetbase\Support\Utils;
+use Fleetbase\Storefront\Http\Requests\GetServiceQuoteFromCart;
+use Fleetbase\FleetOps\Http\Resources\v1\ServiceQuote as ServiceQuoteResource;
+use Fleetbase\FleetOps\Models\Entity;
+use Fleetbase\FleetOps\Models\Place;
+use Fleetbase\FleetOps\Models\ServiceQuote;
+use Fleetbase\FleetOps\Models\ServiceQuoteItem;
+use Fleetbase\FleetOps\Models\ServiceRate;
+use Fleetbase\FleetOps\Models\IntegratedVendor;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\Storefront\Models\Cart;
+use Fleetbase\Storefront\Models\Product;
+use Fleetbase\Storefront\Models\StoreLocation;
+use Fleetbase\FleetOps\Support\Flow;
+use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Support\Str;
-use Exception;
-use Fleetbase\Models\Storefront\Store;
 
 class ServiceQuoteController extends Controller
 {
@@ -50,16 +47,16 @@ class ServiceQuoteController extends Controller
         }
 
         if (!$origin) {
-            return Resp::error('No delivery origin!');
+            return response()->error('No delivery origin!');
         }
 
         if (!$destination) {
-            return Resp::error('No delivery destination!');
+            return response()->error('No delivery destination!');
         }
 
         // if no cart respond with error
         if (!$cart) {
-            return Resp::error('Cart session not found!');
+            return response()->error('Cart session not found!');
         }
 
         // if facilitator is an integrated partner resolve service quotes from bridge
@@ -73,8 +70,8 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([$origin, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
-                    return Resp::error($e->getMessage());
+                } catch (\Exception $e) {
+                    return response()->error($e->getMessage());
                 }
             }
 
@@ -101,7 +98,7 @@ class ServiceQuoteController extends Controller
         $serviceQuotes = collect();
 
         // get order configurations for ecommerce / task
-        $orderConfigs = Api::queryOrderConfigurations(function (&$query) use ($config) {
+        $orderConfigs = Flow::queryOrderConfigurations(function (&$query) use ($config) {
             $query->where('key', $config);
         });
 
@@ -117,8 +114,8 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([$origin, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
-                    return Resp::error($e->getMessage());
+                } catch (\Exception $e) {
+                    return response()->error($e->getMessage());
                 }
 
                 // set origin and destination in service quote meta
@@ -130,7 +127,7 @@ class ServiceQuoteController extends Controller
                 return new ServiceQuoteResource($serviceQuote);
             }
 
-            return Resp::error('No service rates available!');
+            return response()->error('No service rates available!');
         }
 
         foreach ($serviceRates as $serviceRate) {
@@ -204,12 +201,12 @@ class ServiceQuoteController extends Controller
 
         // make sure destination is set
         if (!$destination) {
-            return Resp::error('No delivery destination!');
+            return response()->error('No delivery destination!');
         }
 
         // if no cart respond with error
         if (!$cart) {
-            return Resp::error('Cart session not found!');
+            return response()->error('Cart session not found!');
         }
 
         // collect stores
@@ -259,8 +256,8 @@ class ServiceQuoteController extends Controller
                 try {
                     /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([...$origins, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
-                    return Resp::error($e->getMessage());
+                } catch (\Exception $e) {
+                    return response()->error($e->getMessage());
                 }
             }
 
@@ -288,7 +285,7 @@ class ServiceQuoteController extends Controller
         $serviceQuotes = collect();
 
         // get order configurations for ecommerce / task
-        $orderConfigs = Api::queryOrderConfigurations(function (&$query) use ($config) {
+        $orderConfigs = Flow::queryOrderConfigurations(function (&$query) use ($config) {
             $query->where('key', $config);
         });
 
@@ -302,10 +299,10 @@ class ServiceQuoteController extends Controller
 
             if ($integratedVendor) {
                 try {
-                    /** @var \Fleetbase\Models\ServiceQuote $serviceQuote */
+                    /** @var \Fleetbase\FleetOps\Models\ServiceQuote $serviceQuote */
                     $serviceQuote = $integratedVendor->api()->setRequestId($requestId)->getQuoteFromPreliminaryPayload([...$origins, $destination], [], $serviceType, $scheduledAt, $isRouteOptimized);
-                } catch (Exception $e) {
-                    return Resp::error($e->getMessage());
+                } catch (\Exception $e) {
+                    return response()->error($e->getMessage());
                 }
 
                 // set origin and destination in service quote meta
@@ -317,7 +314,7 @@ class ServiceQuoteController extends Controller
                 return new ServiceQuoteResource($serviceQuote);
             }
 
-            return Resp::error('No service rates available!');
+            return response()->error('No service rates available!');
         }
 
         foreach ($serviceRates as $serviceRate) {

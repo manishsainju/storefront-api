@@ -1,17 +1,16 @@
 <?php
 
-namespace Fleetbase\Support;
+namespace Fleetbase\Storefront\Support;
 
-use Fleetbase\Models\Contact;
-use Fleetbase\Models\Order;
-use Fleetbase\Models\Storefront\Gateway;
-use Fleetbase\Models\Storefront\Network;
-use Fleetbase\Models\Storefront\Product;
-use Fleetbase\Models\Storefront\Store;
+use Fleetbase\Storefront\Models\Gateway;
+use Fleetbase\Storefront\Models\Network;
+use Fleetbase\Storefront\Models\Product;
+use Fleetbase\Storefront\Models\Store;
+use Fleetbase\FleetOps\Models\Contact;
+use Fleetbase\FleetOps\Models\Order;
 use Fleetbase\Models\User;
-use Fleetbase\Notifications\StorefrontOrderCreated;
+use Fleetbase\Storefront\Notifications\StorefrontOrderCreated;
 use Illuminate\Support\Facades\Notification;
-// use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;

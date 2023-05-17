@@ -1,8 +1,9 @@
 <?php
 
-namespace Fleetbase\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class Review extends FleetbaseResource
 {
@@ -15,7 +16,9 @@ class Review extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => $this->public_id,
+            'id' => $this->when(Http::isInternalRequest(), $this->id, $this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
             'subject_id' => $this->subject->id,
             'rating' => $this->rating,
             'content' => $this->content,
@@ -35,7 +38,7 @@ class Review extends FleetbaseResource
                 'filename' => $photo->original_filename,
                 'type' => $photo->content_type,
                 'caption' => $photo->caption,
-                'url' => $photo->s3url
+                'url' => $photo->url
             ];
         });
     }

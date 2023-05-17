@@ -1,8 +1,9 @@
 <?php
 
-namespace Fleetbase\Http\Resources\Storefront;
+namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class Network extends FleetbaseResource
 {
@@ -15,7 +16,10 @@ class Network extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => $this->public_id,
+            'id' => $this->when(Http::isInternalRequest(), $this->id,$this->public_id),
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
+            'public_id' => $this->when(Http::isInternalRequest(), $this->public_id),
+            'key' => $this->when(Http::isInternalRequest(), $this->key),
             'name' => $this->name,
             'description' => $this->description,
             'translations' => $this->translations ?? [],

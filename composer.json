@@ -1,6 +1,6 @@
 {
     "name": "fleetbase/storefront-api",
-    "version": "1.0.0-dev",
+    "version": "1.0.0-alpha",
     "description": "Headless Commerce API for Storefront Fleetbase Extension.",
     "keywords": ["storefront", "headless commerce", "marketplace", "e-commerce"],
     "license": "MIT",
@@ -16,8 +16,8 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "fleetbase/core-api": "*",
-        "fleetbase/fleetops-api": "*",
+        "fleetbase/core-api": "^1.0.0-alpha",
+        "fleetbase/fleetops-api": "^1.0.0-alpha",
         "geocoder-php/google-maps-places-provider": "^1.4",
         "laravel-notification-channels/apn": "^3.8",
         "laravel-notification-channels/fcm": "^2.7",
@@ -43,16 +43,6 @@
             "Fleetbase\\Storefront\\Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../core-api"
-        },
-        {
-            "type": "path",
-            "url": "../fleetops-api"
-        }
-    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {

@@ -1,6 +1,6 @@
 {
     "name": "fleetbase/storefront-api",
-    "version": "1.0.0-alpha",
+    "version": "1.0.1-alpha",
     "description": "Headless Commerce API for Storefront Fleetbase Extension.",
     "keywords": ["storefront", "headless commerce", "marketplace", "e-commerce"],
     "license": "MIT",
@@ -53,7 +53,8 @@
             ]
         },
         "fleetbase": {
-            "create-database": "storefront"
+            "create-database": "storefront",
+            "order-config": "Fleetbase\\Storefront\\Support\\OrderConfig"
         }
     },
     "config": {

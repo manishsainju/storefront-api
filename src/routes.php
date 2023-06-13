@@ -77,6 +77,20 @@ Route::prefix(config('storefront.api.routing.prefix', 'storefront'))->namespace(
                         $router->fleetbaseRoutes('notification-channels');
                         $router->fleetbaseRoutes('reviews');
                         $router->fleetbaseRoutes('votes');
+                        $router->group(
+                            [],
+                            function ($router) {
+                                /** Dashboard Build */
+                                $router->get('dashboard', 'MetricsController@dashboard');
+
+                                $router->group(
+                                    ['prefix' => 'metrics'],
+                                    function ($router) {
+                                        $router->get('all', 'MetricsController@all');
+                                    }
+                                );
+                            }
+                        );
                     }
                 );
             }

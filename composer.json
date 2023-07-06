@@ -1,8 +1,14 @@
 {
     "name": "fleetbase/storefront-api",
-    "version": "1.0.4-alpha",
+    "version": "1.0.5-alpha",
     "description": "Headless Commerce API for Storefront Fleetbase Extension.",
-    "keywords": ["storefront", "headless commerce", "marketplace", "e-commerce"],
+    "keywords": [
+        "fleetbase-extension",
+        "storefront",
+        "headless commerce",
+        "marketplace",
+        "e-commerce"
+    ],
     "license": "MIT",
     "authors": [
         {

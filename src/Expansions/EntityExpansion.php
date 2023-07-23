@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetbase\FleetOps\Expansions;
+namespace Fleetbase\Storefront\Expansions;
 
 use Fleetbase\Build\Expansion;
 

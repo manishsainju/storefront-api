@@ -1,6 +1,6 @@
 {
     "name": "fleetbase/storefront-api",
-    "version": "1.0.8-alpha",
+    "version": "1.0.9-alpha",
     "description": "Headless Commerce API for Storefront Fleetbase Extension.",
     "keywords": [
         "fleetbase-extension",
@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "fleetbase/core-api": "^1.1.6-alpha",
+        "fleetbase/core-api": "^1.1.8",
         "fleetbase/fleetops-api": "^1.0.9-alpha",
         "geocoder-php/google-maps-places-provider": "^1.4",
         "laravel-notification-channels/apn": "^3.8",

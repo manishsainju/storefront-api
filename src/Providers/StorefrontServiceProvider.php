@@ -40,7 +40,7 @@ class StorefrontServiceProvider extends CoreServiceProvider
             'throttle:60,1',
             \Illuminate\Session\Middleware\StartSession::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Fleetbase\Http\Middleware\SetStorefrontSession::class,
+            \Fleetbase\Storefront\Http\Middleware\SetStorefrontSession::class,
             \Fleetbase\Http\Middleware\ConvertStringBooleans::class,
             \Fleetbase\Http\Middleware\SetGlobalHeaders::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,

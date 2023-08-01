@@ -22,6 +22,10 @@ class SetStorefrontSession
     {
         $key = $request->bearerToken();
 
+        if (!$key) {
+            return response()->error('Oops! No Storefront key found with this request', 401);
+        }
+
         if ($this->isValidKey($key)) {
             $this->setKey($key);
             $this->setupCustomerSession($request);

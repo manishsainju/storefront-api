@@ -98,7 +98,7 @@ class SetStorefrontSession
             $accessToken = PersonalAccessToken::findToken($token);
 
             if ($accessToken) {
-                $tokenable = $accessToken->tokenable ?? app($accessToken->tokenable_type)->where('uuid', $accessToken->tokenable_id)->withoutGlobalScopes()->first();
+                $tokenable = $this->getTokenableFromAccessToken($accessToken);
 
                 if (!$tokenable) {
                     return;
@@ -113,5 +113,14 @@ class SetStorefrontSession
                 ]);
             }
         }
+    }
+
+    public function getTokenableFromAccessToken(PersonalAccessToken $personalAccessToken)
+    {
+        if ($personalAccessToken->tokenable) {
+            return $personalAccessToken->tokenable;
+        }
+
+        return app($personalAccessToken->tokenable_type)->where('uuid', $personalAccessToken->tokenable_id)->withoutGlobalScopes()->first();
     }
 }

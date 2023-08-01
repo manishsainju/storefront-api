@@ -31,6 +31,24 @@ class StorefrontServiceProvider extends CoreServiceProvider
     ];
 
     /**
+     * The middleware groups registered with the service provider.
+     *
+     * @var array
+     */
+    public $middleware = [
+        'storefront.api' => [
+            'throttle:60,1',
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Fleetbase\Storefront\Http\Middleware\SetStorefrontSession::class,
+            \Fleetbase\Http\Middleware\ConvertStringBooleans::class,
+            \Fleetbase\Http\Middleware\SetGlobalHeaders::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Fleetbase\Http\Middleware\LogApiRequests::class,
+        ],
+    ];
+
+    /**
      * Register any application services.
      *
      * Within the register method, you should only bind things into the 
@@ -60,6 +78,7 @@ class StorefrontServiceProvider extends CoreServiceProvider
     public function boot()
     {
         $this->registerObservers();
+        $this->registerMiddleware();
         $this->registerExpansionsFrom(__DIR__ . '/../Expansions');
         $this->loadRoutesFrom(__DIR__ . '/../routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../../migrations');

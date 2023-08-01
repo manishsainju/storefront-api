@@ -17,6 +17,87 @@ Route::prefix(config('storefront.api.routing.prefix', 'storefront'))->namespace(
     function ($router) {
         /*
         |--------------------------------------------------------------------------
+        | Consumable Storefront API Routes
+        |--------------------------------------------------------------------------
+        |
+        | End-user API routes, these are routes that the SDK and applications will interface with, and require API credentials.
+        */
+        Route::prefix('v1')
+            ->middleware('storefront.api')
+            ->namespace('v1')
+            ->group(function ($router) {
+                $router->get('about', 'StoreController@about');
+                $router->get('locations/{id}', 'StoreController@location');
+                $router->get('locations', 'StoreController@locations');
+                $router->get('gateways/{id}', 'StoreController@gateway');
+                $router->get('gateways', 'StoreController@gateways');
+                $router->get('search', 'StoreController@search');
+                $router->get('stores', 'NetworkController@stores');
+                $router->get('store-locations', 'NetworkController@storeLocations');
+                $router->get('tags', 'NetworkController@tags');
+
+                // storefront/v1/checkouts
+                $router->group(['prefix' => 'checkouts'], function () use ($router) {
+                    $router->get('before', 'CheckoutController@beforeCheckout');
+                    $router->get('capture', 'CheckoutController@captureOrder');
+                });
+
+                // storefront/v1/service-quotes
+                $router->group(['prefix' => 'service-quotes'], function () use ($router) {
+                    $router->get('from-cart', 'ServiceQuoteController@fromCart');
+                });
+
+                // storefront/v1/categories
+                $router->group(['prefix' => 'categories'], function () use ($router) {
+                    $router->get('/', 'CategoryController@query');
+                });
+
+                // storefront/v1/products
+                $router->group(['prefix' => 'products'], function () use ($router) {
+                    $router->get('/', 'ProductController@query');
+                    $router->get('{id}', 'ProductController@find');
+                });
+
+                // storefront/v1/reviews
+                $router->group(['prefix' => 'reviews'], function () use ($router) {
+                    $router->get('/', 'ReviewController@query');
+                    $router->get('count', 'ReviewController@count');
+                    $router->get('{id}', 'ReviewController@find');
+                    $router->post('/', 'ReviewController@create');
+                    $router->delete('{id}', 'ReviewController@find');
+                });
+
+                // storefront/v1/customers
+                $router->group(['prefix' => 'customers'], function () use ($router) {
+                    $router->put('{id}', 'CustomerController@update');
+                    $router->get('/', 'CustomerController@query');
+                    $router->post('register-device', 'CustomerController@registerDevice');
+                    $router->get('places', 'CustomerController@places');
+                    $router->get('orders', 'CustomerController@orders');
+                    $router->get('{id}', 'CustomerController@find');
+                    $router->post('/', 'CustomerController@create');
+                    $router->post('login-with-sms', 'CustomerController@loginWithPhone');
+                    $router->post('verify-code', 'CustomerController@verifyCode');
+                    $router->post('login', 'CustomerController@login');
+                    $router->post('request-creation-code', 'CustomerController@requestCustomerCreationCode');
+                });
+
+                // hotfix! storefront-app sending customer update to /contacts/ route
+                $router->put('contacts/{id}', 'CustomerController@update');
+
+                // storefront/v1/carts
+                $router->group(['prefix' => 'carts'], function () use ($router) {
+                    $router->get('/', 'CartController@retrieve');
+                    $router->get('{uniqueId}', 'CartController@retrieve');
+                    $router->put('{cartId}/empty', 'CartController@empty');
+                    $router->post('{cartId}/{productId}', 'CartController@add');
+                    $router->put('{cartId}/{lineItemId}', 'CartController@update');
+                    $router->delete('{cartId}/{lineItemId}', 'CartController@remove');
+                    $router->delete('{cartId}', 'CartController@delete');
+                });
+            });
+        /*
+        |--------------------------------------------------------------------------
         | Internal Storefront API Routes
         |--------------------------------------------------------------------------
         |

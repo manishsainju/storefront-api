@@ -36,6 +36,8 @@ class Network extends FleetbaseResource
             'backdrop_url' => $this->backdrop_url,
             'rating' => $this->rating,
             'online' => $this->online,
+            'stores' => $this->when($request->boolean('with_stores') || $request->inArray('with', 'stores'), Store::collection($this->stores)),
+            'categories' => $this->when($request->boolean('with_categories') || $request->inArray('with', 'categories'), Category::collection($this->categories)),
             'is_network' => true,
             'is_store' => false,
             'slug' => $this->slug,

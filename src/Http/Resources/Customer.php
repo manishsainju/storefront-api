@@ -2,7 +2,6 @@
 
 namespace Fleetbase\Storefront\Http\Resources;
 
-use Fleetbase\FleetOps\Models\Place;
 use Fleetbase\Http\Resources\FleetbaseResource;
 use Fleetbase\Support\Http;
 use Illuminate\Support\Str;

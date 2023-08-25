@@ -11,6 +11,11 @@ class StoreFilter extends Filter
         $this->builder->where('company_uuid', $this->session->get('company'));
     }
 
+    public function storeQuery(?string $searchQuery)
+    {
+        $this->builder->search($searchQuery);
+    }
+
     public function network(?string $network)
     {
         $this->builder->whereHas(
@@ -25,7 +30,11 @@ class StoreFilter extends Filter
 
                 // Query stores by category
                 if ($this->request->filled('category')) {
-                    $query->where('category_uuid', $this->request->input('category'));
+                    if ($this->request->input('category') === '_parent') {
+                        $query->whereNull('category_uuid');
+                    } else {
+                        $query->where('category_uuid', $this->request->input('category'));
+                    }
                 }
             }
         );

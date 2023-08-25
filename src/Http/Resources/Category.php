@@ -3,6 +3,7 @@
 namespace Fleetbase\Storefront\Http\Resources;
 
 use Fleetbase\Http\Resources\FleetbaseResource;
+use Fleetbase\Support\Http;
 
 class Category extends FleetbaseResource
 {
@@ -15,7 +16,8 @@ class Category extends FleetbaseResource
     public function toArray($request)
     {
         return [
-            'id' => $this->public_id ?? $this->id,
+            'id' => $this->public_id,
+            'uuid' => $this->when(Http::isInternalRequest(), $this->uuid),
             'name' => $this->name,
             'description' => $this->description,
             'icon_url' => $this->icon_url,
@@ -37,6 +39,7 @@ class Category extends FleetbaseResource
                     $this->subCategories->toArray()
                 )
             ),
+            'order' => $this->order,
             'slug' => $this->slug,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

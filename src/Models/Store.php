@@ -86,7 +86,7 @@ class Store extends StorefrontModel
      *
      * @var array
      */
-    protected $filterParams = ['network', 'without_category', 'category'];
+    protected $filterParams = ['network', 'without_category', 'category', 'category_uuid'];
 
     /**
      * @var \Spatie\Sluggable\SlugOptions
@@ -174,7 +174,7 @@ class Store extends StorefrontModel
      */
     public function categories()
     {
-        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Category::class);
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Category::class, 'owner_uuid');
     }
 
     /**
@@ -266,11 +266,13 @@ class Store extends StorefrontModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function networks()
     {
-        return $this->hasManyThrough(Network::class, NetworkStore::class, 'store_uuid', 'uuid', 'uuid', 'network_uuid');
+        return $this->belongsToMany(Network::class, 'network_stores', 'store_uuid', 'network_uuid')
+            ->using(NetworkStore::class)
+            ->withPivot('category_uuid');
     }
 
     /**
@@ -295,6 +297,53 @@ class Store extends StorefrontModel
     public function getRatingAttribute()
     {
         return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    /**
+     * Retrieves the category of the store belonging to the specified network using the network id.
+     *
+     * @param  string $id The ID of the network for which the category is to be retrieved.
+     * @return \Fleetbase\Models\Category|null The category of the store in the given network, or null if the store does not belong to the network.
+     */
+    public function getNetworkCategoryUsingId(?string $id)
+    {
+        if (is_null($id)) {
+            return null;
+        }
+
+        try {
+            $network = Network::where('uuid', $id)->orWhere('public_id', $id)->first();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return $this->getNetworkCategory($network);
+    }
+
+    /**
+     * Retrieves the category of the store belonging to the specified network.
+     *
+     * @param  \Fleetbase\Storefront\Models\Network $network The network for which the category is to be retrieved.
+     * @return \Fleetbase\Models\Category|null The category of the store in the given network, or null if the store does not belong to the network.
+     */
+    public function getNetworkCategory(Network $network)
+    {
+        // Find the relationship between this store and the given network
+        $networkRelation = $this->networks()->where('networks.uuid', $network->uuid)->first();
+
+        // Check if the relationship exists
+        if ($networkRelation) {
+            // Retrieve the category_uuid from the pivot table
+            $categoryUuid = $networkRelation->pivot->category_uuid;
+
+            // Assuming you have a Category model that's connected to the correct database
+            return Category::find($categoryUuid);
+        }
+
+        // Return null if the store does not belong to the given network
+        return null;
     }
 
     /**

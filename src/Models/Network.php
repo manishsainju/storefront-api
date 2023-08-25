@@ -20,7 +20,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Network extends StorefrontModel
 {
-    use HasUuid, HasPublicid, HasApiModelBehavior, HasOptionsAttributes, HasSlug, Searchable;
+    use HasUuid, HasPublicId, HasApiModelBehavior, HasOptionsAttributes, HasSlug, Searchable;
 
     /**
      * The type of public Id to generate
@@ -48,7 +48,7 @@ class Network extends StorefrontModel
      *
      * @var array
      */
-    protected $fillable = ['created_by_uuid', 'company_uuid', 'logo_uuid', 'backdrop_uuid', 'online', 'name', 'description', 'website', 'facebook', 'instagram', 'twitter', 'email', 'phone', 'translations', 'tags', 'currency', 'timezone', 'pod_method', 'options', 'alertable', 'slug'];
+    protected $fillable = ['created_by_uuid', 'company_uuid', 'logo_uuid', 'backdrop_uuid', 'key', 'online', 'name', 'description', 'website', 'facebook', 'instagram', 'twitter', 'email', 'phone', 'translations', 'tags', 'currency', 'timezone', 'pod_method', 'options', 'alertable', 'slug'];
 
     /**
      * The attributes that should be cast to native types.
@@ -149,7 +149,9 @@ class Network extends StorefrontModel
      */
     public function stores()
     {
-        return $this->hasManyThrough(Store::class, NetworkStore::class, 'network_uuid', 'uuid', 'uuid', 'store_uuid');
+        return $this->belongsToMany(Store::class, 'network_stores', 'network_uuid', 'store_uuid')
+            ->using(NetworkStore::class)
+            ->withPivot('category_uuid');
     }
 
     /**
@@ -174,6 +176,14 @@ class Network extends StorefrontModel
     public function invitations()
     {
         return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Invite::class, 'subject_uuid');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function categories()
+    {
+        return $this->setConnection(config('fleetbase.connection.db'))->hasMany(Category::class, 'owner_uuid')->where(['for' => 'network_category']);
     }
 
     /**

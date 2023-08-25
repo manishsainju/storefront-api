@@ -38,6 +38,8 @@ class Store extends FleetbaseResource
             'online' => $this->online,
             'is_network' => false,
             'is_store' => true,
+            'category' => $this->when($request->filled('network') && $request->has('with_category'), new Category($this->getNetworkCategoryUsingId($request->input('network')))),
+            'networks' => $this->when($request->boolean('with_networks') || $request->inArray('with', 'networks'), Network::collection($this->networks)),
             'locations' => $this->when($request->boolean('with_locations'), $this->locations->mapInto(StoreLocation::class)),
             'media' => $this->when($request->boolean('with_media'), Media::collection($this->media)),
             'slug' => $this->slug,

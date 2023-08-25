@@ -5,8 +5,9 @@ namespace Fleetbase\Storefront\Models;
 use Fleetbase\Models\Category;
 use Fleetbase\Traits\HasUuid;
 use Fleetbase\Traits\HasApiModelBehavior;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class NetworkStore extends StorefrontModel
+class NetworkStore extends Pivot
 {
     use HasUuid, HasApiModelBehavior;
 
@@ -44,6 +45,20 @@ class NetworkStore extends StorefrontModel
      * @var array
      */
     protected $appends = [];
+
+    /**
+     * Create a new instance of the model.
+     *
+     * @param array $attributes The attributes to set on the model.
+     *
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->connection = config('storefront.connection.db');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

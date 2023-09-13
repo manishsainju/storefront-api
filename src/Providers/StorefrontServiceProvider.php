@@ -49,6 +49,15 @@ class StorefrontServiceProvider extends CoreServiceProvider
     ];
 
     /**
+     * The console commands registered with the service provider.
+     *
+     * @var array
+     */
+    public $commands = [
+        \Fleetbase\Storefront\Console\Commands\NotifyStorefrontOrderNearby::class
+    ];
+
+    /**
      * Register any application services.
      *
      * Within the register method, you should only bind things into the 
@@ -77,6 +86,10 @@ class StorefrontServiceProvider extends CoreServiceProvider
      */
     public function boot()
     {
+        $this->registerCommands();
+        $this->scheduleCommands(function ($schedule) {
+            $schedule->command('storefront:notify-order-nearby')->everyMinute();
+        });
         $this->registerObservers();
         $this->registerMiddleware();
         $this->registerExpansionsFrom(__DIR__ . '/../Expansions');

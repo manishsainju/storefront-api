@@ -4,7 +4,7 @@ namespace Fleetbase\Storefront\Notifications;
 
 use Exception;
 use Fleetbase\FleetOps\Models\Order;
-use Fleetbase\Models\Storefront\NotificationChannel;
+use Fleetbase\Storefront\Models\NotificationChannel;
 use Fleetbase\Storefront\Support\Storefront;
 use Fleetbase\FleetOps\Support\Utils;
 use Illuminate\Bus\Queueable;

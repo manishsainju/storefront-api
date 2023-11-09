@@ -20,10 +20,17 @@
             "email": "ron@fleetbase.io"
         }
     ],
+    "repositories": [{
+        "type": "git",
+        "url": "https://github.com/manishsainju/core-api.git"
+    },{
+        "type": "git",
+        "url": "https://github.com/manishsainju/fleetops.git"
+    }],
     "require": {
         "php": "^7.4|^8.0",
-        "fleetbase/core-api": "^1.2.6",
-        "fleetbase/fleetops-api": "^1.1.4",
+        "fleetbase/core-api": "dev-katch-main",
+        "fleetbase/fleetops-api": "dev-katch-main",
         "geocoder-php/google-maps-places-provider": "^1.4",
         "laravel-notification-channels/apn": "^3.8",
         "laravel-notification-channels/fcm": "^2.7",
